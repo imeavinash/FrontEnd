@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Sabera</string>
+    <string name="facebook_app_id">1797001573916627</string>
+    <string name="fb_login_protocol_scheme">fb1797001573916627</string>
+    <string name="title_activity_registration_activty">RegistrationActivty</string>
+    <string name="title_activity_base">BaseActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+</resources>
