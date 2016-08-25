@@ -12,6 +12,8 @@ import com.example.avinashbehera.sabera.fragments.SeeQnFragment;
 /**
  * Created by avinashbehera on 26/08/16.
  */
+
+// Adapter for Base Activity tabs
 public class BaseActivityPagerAdapter extends FragmentPagerAdapter {
 
     public BaseActivityPagerAdapter(FragmentManager fm) {
