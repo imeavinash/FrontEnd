@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
 
             Log.d("LoginActivity","user!=null && user.getName() != null");
 
-            Intent homeIntent = new Intent(LoginActivity.this, LogoutActivity.class);
+            Intent homeIntent = new Intent(LoginActivity.this, BaseActivity.class);
 
             startActivity(homeIntent);
 
@@ -253,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
                     user.setBirthday(jsonObjRec.getString(Constants.TAG_Birthday).toString());
                     user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
                     com.example.avinashbehera.sabera.util.PrefUtilsUser.setCurrentUser(user, LoginActivity.this);
-                    Intent intent = new Intent(LoginActivity.this, LogoutActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, BaseActivity.class);
                     startActivity(intent);
                     finish();
 
