@@ -3,6 +3,7 @@ package com.example.avinashbehera.sabera.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -10,7 +11,9 @@ import android.widget.RelativeLayout;
 
 import com.example.avinashbehera.sabera.R;
 import com.example.avinashbehera.sabera.model.User;
+import com.example.avinashbehera.sabera.model.UserPostQn;
 import com.example.avinashbehera.sabera.util.Constants;
+import com.example.avinashbehera.sabera.util.PrefUtilsPostQn;
 import com.example.avinashbehera.sabera.util.PrefUtilsTempUser;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
 
@@ -27,6 +30,8 @@ public class CategoryActivity extends AppCompatActivity {
     private Button entButton;
     private Button acadButton;
     private Button miscButton;
+    private String requestFrom;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,33 +41,33 @@ public class CategoryActivity extends AppCompatActivity {
         mCategoriesList = new ArrayList<>();
         getSupportActionBar().setTitle("CategoryActivity");
 
+
+
+
+
+
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                User user = PrefUtilsTempUser.getCurrentUser(CategoryActivity.this);
-                user.setCategoryList(mCategoriesList);
 
-                if(Constants.backendTest){
+                    Log.d(TAG, "requestFrom = " + requestFrom);
+                    //PrefUtilsPostQn.updateCategory(CategoryActivity.this,mCategoriesList);
 
-                }else{
-                    User user2 = new User();
-                    user2.setFacebookID(user.getFacebookID());
-                    user2.setEmail(user.getName());
-                    user2.setBirthday(user.getBirthday());
-                    user2.setGender(user.getGender());
-                    user2.setCategoryList(user.getCategoryList());
-                    PrefUtilsUser.setCurrentUser(user,CategoryActivity.this);
-                    Intent intent = new Intent(CategoryActivity.this, BaseActivity.class);
-                    startActivity(intent);
+                    Intent returnIntent = new Intent();
+                    returnIntent.putStringArrayListExtra(Constants.EXTRA_RESULT_CATEGORY, mCategoriesList);
+                    setResult(RESULT_OK, returnIntent);
                     finish();
 
 
-                }
+
+
+
 
             }
         });
     }
+
 
     public void onCheckboxClicked(View view) {
         // Is the view now checked?

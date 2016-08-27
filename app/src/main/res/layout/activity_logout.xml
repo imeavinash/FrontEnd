@@ -142,13 +142,6 @@
             android:text=""/>
     </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/userIdButton"
-        android:text="Get User Id"
-        android:layout_below="@id/userIdLinearLayout"
-        android:layout_centerHorizontal="true"/>
 
 
     <TextView android:text="Logout"
@@ -156,7 +149,7 @@
         android:id="@+id/btnLogout"
         android:layout_centerHorizontal="true"
         android:padding="16dp"
-        android:layout_below="@+id/userIdButton"
+        android:layout_below="@+id/userIdLinearLayout"
         android:background="#494949"
         android:textColor="#fff"
         android:layout_width="wrap_content"

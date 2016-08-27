@@ -9,8 +9,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".Activity.RegistrationActivity"
-    tools:showIn="@layout/activity_registration_activty">
+    tools:context=".Activity.RegistrationDetailActivity"
+    tools:showIn="@layout/activity_registrationdetail_activty">
 
     <LinearLayout
         android:id="@+id/nameRegLinearLayout"
@@ -46,7 +46,7 @@
             android:layout_weight="1"
             android:text="Email : "/>
 
-        <EditText
+        <TextView
             android:id="@+id/emaillRegEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -110,10 +110,36 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/pickCtgryLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/birthdayRegLinearLayout">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Categories Selected : "
+            />
+
+        <TextView
+            android:id="@+id/regCtgryTxtView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="50dp"/>
+
+        <Button
+            android:id="@+id/btnRegPickCtgry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PickCategory"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/doneCancelRegLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/birthdayRegLinearLayout"
+        android:layout_below="@+id/pickCtgryLL"
         android:layout_centerHorizontal="true">
 
         <Button
@@ -124,11 +150,11 @@
             android:text="Cancel"/>
 
         <Button
-            android:id="@+id/proceedRegButton"
+            android:id="@+id/doneRegButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Proceed"/>
+            android:text="Done"/>
     </LinearLayout>
 
 

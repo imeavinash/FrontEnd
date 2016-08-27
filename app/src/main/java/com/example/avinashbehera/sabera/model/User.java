@@ -7,6 +7,17 @@ import java.util.ArrayList;
  */
 public class User {
 
+    public User() {
+    }
+
+    private String pwd;
+
+
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
     private String name;
 
     private String email;
@@ -25,12 +36,36 @@ public class User {
 
     private ArrayList<String> categoryList;
 
+    private String categories;
+
+    public String getCategories() {
+        return categories;
+    }
+
+    public void setCategories(String categories) {
+        this.categories = categories;
+    }
+
+    private String Questions;
+
     public ArrayList<String> getCategoryList() {
         return categoryList;
     }
 
     public void setCategoryList(ArrayList<String> categoryList) {
         this.categoryList = categoryList;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public String getQuestions() {
+        return Questions;
+    }
+
+    public void setQuestions(String questions) {
+        Questions = questions;
     }
 
     public String getSaberaId() {
@@ -59,8 +94,7 @@ public class User {
 
 
 
-    public User() {
-    }
+
 
 
 

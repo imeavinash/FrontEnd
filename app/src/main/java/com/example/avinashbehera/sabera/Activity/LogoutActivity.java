@@ -17,6 +17,7 @@ import com.example.avinashbehera.sabera.model.User;
 import com.example.avinashbehera.sabera.util.Constants;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
 import com.example.avinashbehera.sabera.network.HttpClient;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.widget.ProfilePictureView;
 
@@ -37,7 +38,7 @@ public class LogoutActivity extends AppCompatActivity {
     private ProfilePictureView profilePictureView;
     private Bitmap bitmap;
     private ImageView mImageView;
-    private Button userIdButtton;
+
     private TextView userSaberaIdTextView;
     private TextView birthdayTextView;
     private TextView categoriesTextView;
@@ -61,7 +62,7 @@ public class LogoutActivity extends AppCompatActivity {
         userSaberaIdTextView = (TextView)findViewById(R.id.userIdTextView);
         birthdayTextView = (TextView)findViewById(R.id.birthdayTextView);
         //mImageView=(ImageView)findViewById(R.id.profilePicture);
-        userIdButtton=(Button) findViewById(R.id.userIdButton);
+
         profilePictureView = (ProfilePictureView)findViewById(R.id.profilePicture);
         categoriesTextView=(TextView) findViewById(R.id.categoryTextView);
 
@@ -74,38 +75,13 @@ public class LogoutActivity extends AppCompatActivity {
             genderTextView.setText(user.getGender());
             birthdayTextView.setText(user.getBirthday());
             userSaberaIdTextView.setText(user.getSaberaId());
-            categoriesTextView.setText(user.getCategoryList().toString());
+            categoriesTextView.setText(user.getCategories());
 
             //new setProfilePicture().execute();
 
 
         }
 
-        userIdButtton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Log.d(TAG,"userIdButton - onClick");
-                JSONObject jsonObjSend = buildJsonToSend();
-                if(jsonObjSend.length() > 0)
-                    new SendPostRequest().execute(jsonObjSend);
-                else
-                    Log.e(TAG,"jsonObjSend length = 0");
-
-                // Send the HttpPostRequest and receive a JSONObject in return
-                //JSONObject jsonObjRecv = HttpClient.SendHttpPostUsingUrlConnection(URL, jsonObjSend);
-//                try{
-//                    if(jsonObjRecv != null)
-//                        userIdTextView.setText(jsonObjRecv.getString(TAG_UserSaberaId));
-//                    else
-//                        Log.e(TAG,"jsonObjRec == null");
-//                }catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-
-
-            }
-        });
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +90,8 @@ public class LogoutActivity extends AppCompatActivity {
 
 
                 // We can logout from facebook by calling following method
-                LoginManager.getInstance().logOut();
+                if(FacebookSdk.isInitialized())
+                    LoginManager.getInstance().logOut();
 
 
                 Intent i= new Intent(LogoutActivity.this,LoginActivity.class);
@@ -124,65 +101,7 @@ public class LogoutActivity extends AppCompatActivity {
         });
     }
 
-    public class SendPostRequest extends AsyncTask<JSONObject, Void, JSONObject> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
 
-        @Override
-        protected JSONObject doInBackground(JSONObject... params) {
-
-            JSONObject jsonObjRec = HttpClient.SendHttpPostUsingUrlConnection(Constants.getSaberaIdURL,params[0]);
-            if(jsonObjRec != null)
-                return jsonObjRec;
-            else
-                return null;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObjRec) {
-            super.onPostExecute(jsonObjRec);
-            try{
-                if(jsonObjRec != null)
-                    userSaberaIdTextView.setText(jsonObjRec.getString(Constants.TAG_UserSaberaId));
-                else
-                    Log.e(TAG,"jsonObjRec == null");
-            }catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private JSONObject buildJsonToSend() {
-
-        JSONObject jsonObjSend = new JSONObject();
-
-        try {
-            // Add key/value pairs
-            jsonObjSend.put(Constants.TAG_Name, user.getName());
-            jsonObjSend.put(Constants.TAG_Email, user.getEmail());
-            jsonObjSend.put(Constants.TAG_Gender, user.getGender());
-            jsonObjSend.put(Constants.TAG_UserFBId, user.getFacebookID());
-
-
-            // Add a nested JSONObject (e.g. for header information)
-            //JSONObject header = new JSONObject();
-            //header.put("deviceType","Android"); // Device type
-            //header.put("deviceVersion","2.0"); // Device OS version
-            //header.put("language", "es-es");	// Language of the Android client
-            //jsonObjSend.put("header", header);
-
-            // Output the JSON object we're sending to Logcat:
-            //Log.i(TAG, jsonObjSend.toString(2));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jsonObjSend;
-
-    }
 
 
 

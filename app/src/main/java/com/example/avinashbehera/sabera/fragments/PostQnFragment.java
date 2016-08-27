@@ -1,22 +1,24 @@
 package com.example.avinashbehera.sabera.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.example.avinashbehera.sabera.Activity.PostQnDetailActivity;
 import com.example.avinashbehera.sabera.R;
+import com.example.avinashbehera.sabera.model.UserPostQn;
 import com.example.avinashbehera.sabera.util.Constants;
+import com.example.avinashbehera.sabera.util.PrefUtilsPostQn;
 import com.example.avinashbehera.sabera.util.Utility;
 
 /**
@@ -28,16 +30,15 @@ import com.example.avinashbehera.sabera.util.Utility;
 
     public class PostQnFragment extends Fragment {
 
-    private static final int OPTION_OBJECTIVE = 1;
-    private static final int OPTION_SUBJECTIVE = 2;
-    private int OPTION_SELECTED = 1;
+
+    private int OPTION_SELECTED = Constants.POST_QN_TYPE_NONE;
     private EditText postQnEditText;
     private Button proceedButton;
     private Button cancelButton;
     private RadioButton objectiveRadioButton;
     private RadioButton subjectiveRadioButton;
     private LinearLayout objSubjPostQnLinearLayout;
-    private LinearLayout postObjQnDetail;
+
 
        public PostQnFragment(){
 
@@ -55,7 +56,7 @@ import com.example.avinashbehera.sabera.util.Utility;
         objectiveRadioButton = (RadioButton) rootView.findViewById(R.id.radio_objective);
         subjectiveRadioButton = (RadioButton) rootView.findViewById(R.id.radio_subjective);
         objSubjPostQnLinearLayout = (LinearLayout) rootView.findViewById(R.id.objSubjPostQnLinearLayout);
-        postObjQnDetail = (LinearLayout) rootView.findViewById(R.id.postObjQnDetail);
+
 
 
         objectiveRadioButton.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +64,7 @@ import com.example.avinashbehera.sabera.util.Utility;
             public void onClick(View v) {
                 boolean checked = ((RadioButton) v).isChecked();
                 if (checked)
-                    OPTION_SELECTED = OPTION_OBJECTIVE;
+                    OPTION_SELECTED = Constants.POST_QN_TYPE_OBJECTIVE;
             }
         });
 
@@ -72,7 +73,7 @@ import com.example.avinashbehera.sabera.util.Utility;
             public void onClick(View v) {
                 boolean checked = ((RadioButton) v).isChecked();
                 if (checked)
-                    OPTION_SELECTED = OPTION_OBJECTIVE;
+                    OPTION_SELECTED = Constants.POST_QN_TYPE_SUBJECTIVE;
             }
         });
 
@@ -81,8 +82,10 @@ import com.example.avinashbehera.sabera.util.Utility;
             @Override
             public void onClick(View v) {
 
-                objectiveRadioButton.setChecked(true);
+                objectiveRadioButton.setChecked(false);
+                subjectiveRadioButton.setChecked(false);
                 postQnEditText.getText().clear();
+                OPTION_SELECTED = Constants.POST_QN_TYPE_NONE;
 
             }
         });
@@ -95,10 +98,26 @@ import com.example.avinashbehera.sabera.util.Utility;
                     Utility.makeToast(getContext(), "Please enter a question", Toast.LENGTH_LONG);
                 } else {
 
-                    objSubjPostQnLinearLayout.setVisibility(View.GONE);
-                    postObjQnDetail.setVisibility(View.VISIBLE);
-                    Button button = (Button)v;
-                    button.setText("Submit");
+                    if(!objectiveRadioButton.isChecked() && !subjectiveRadioButton.isChecked())
+                        Utility.makeToast(getContext(),"Please select a question type",Toast.LENGTH_LONG);
+                    else{
+
+                        UserPostQn tempQn = new UserPostQn();
+                        if(OPTION_SELECTED == Constants.POST_QN_TYPE_OBJECTIVE) {
+
+                            tempQn.setQnType(Constants.VALUE_PostQn_Objective);
+                        }
+                        else {
+                            tempQn.setQnType(Constants.VALUE_PostQn_Subjective);
+                        }
+                            tempQn.setQnTxt(postQnEditText.getText().toString());
+                            PrefUtilsPostQn.setCurrentPostQn(tempQn,getContext());
+                            Intent intent = new Intent(getContext(), PostQnDetailActivity.class);
+                            startActivity(intent);
+
+
+
+                    }
 
 
                 }
@@ -108,7 +127,7 @@ import com.example.avinashbehera.sabera.util.Utility;
 
 
         return rootView;
-    }
+    }//end of onCreateView
 
 
 

@@ -55,14 +55,19 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".Activity.RegistrationActivity"
+            android:name=".Activity.RegistrationDetailActivity"
             android:label="@string/title_activity_registration_activty"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Activity.CategoryActivity" />
         <activity
             android:name=".Activity.BaseActivity"
             android:label="@string/title_activity_base"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activity.PostQnDetailActivity"
+            android:label="@string/title_activity_post_qn_obj_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Activity.Registration1Activity"></activity>
     </application>
 
 </manifest>
