@@ -24,7 +24,9 @@
             android:id="@+id/postQnAnsEdtTxt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Type your answer here"/>
+            android:hint="Type your answer here"
+            android:gravity="start"
+            android:textAlignment="viewStart"/>
     </LinearLayout>
 
     <LinearLayout
@@ -146,17 +148,37 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Timer : "/>
 
-            <EditText
-                android:id="@+id/postQnTimerEdtText"
-                android:layout_width="0dp"
+
+
+                <EditText
+                    android:id="@+id/minEdtText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="Set Answer Time"/>
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text=" : "/>
+
+            <EditText
+                android:id="@+id/secEdtText"
+                android:layout_width="0dp"
                 android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
                 android:hint="Set Answer Time"/>
+
+
+
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -182,6 +204,26 @@
                 android:layout_height="wrap_content"
                 android:text="PickCategory"/>
         </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Keywords : "
+            />
+
+        <TextView
+            android:id="@+id/postQnKeywordsTxtView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="50dp"/>
+
+
+    </LinearLayout>
 
         <Button
             android:id="@+id/btnSubmitPostQnObjDetail"

@@ -1,5 +1,9 @@
 package com.example.avinashbehera.sabera.model;
 
+import android.widget.LinearLayout;
+
+import org.json.simple.JSONArray;
+
 import java.util.ArrayList;
 
 /**
@@ -12,10 +16,28 @@ public class User {
 
     private String pwd;
 
+    private String gcmRegToken;
 
+    public String getGcmRegToken() {
+        return gcmRegToken;
+    }
+
+    public void setGcmRegToken(String gcmRegToken) {
+        this.gcmRegToken = gcmRegToken;
+    }
 
     public void setPwd(String pwd) {
         this.pwd = pwd;
+    }
+
+    private ArrayList<LinearLayout> qnLLArray;
+
+    public ArrayList<LinearLayout> getQnLLArray() {
+        return qnLLArray;
+    }
+
+    public void setQnLLArray(ArrayList<LinearLayout> qnLLArray) {
+        this.qnLLArray = qnLLArray;
     }
 
     private String name;
@@ -44,6 +66,26 @@ public class User {
 
     public void setCategories(String categories) {
         this.categories = categories;
+    }
+
+    private ArrayList<UserSeeQn> questionArray;
+
+    private JSONArray qnJsonArray;
+
+    public JSONArray getQnJsonArray() {
+        return qnJsonArray;
+    }
+
+    public void setQnJsonArray(JSONArray qnJsonArray) {
+        this.qnJsonArray = qnJsonArray;
+    }
+
+    public ArrayList<UserSeeQn> getQuestionArray() {
+        return questionArray;
+    }
+
+    public void setQuestionArray(ArrayList<UserSeeQn> questionArray) {
+        this.questionArray = questionArray;
     }
 
     private String Questions;

@@ -22,8 +22,9 @@ import com.example.avinashbehera.sabera.util.PrefUtilsUser;
 import com.example.avinashbehera.sabera.util.Utility;
 import com.example.avinashbehera.sabera.network.HttpClient;
 
+//import org.json.simple.JSONException;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -107,7 +108,7 @@ public class RegistrationDetailActivity extends AppCompatActivity {
 
 
         user = PrefUtilsUser.getCurrentUser(this);
-        //fbId = intent.getStringExtra(Constants.EXTRA_UserFBId);
+        //fbId = intent.getExtra(Constants.EXTRA_UserFBId);
         name = user.getName();
         email = user.getEmail();
         gender = user.getGender();
@@ -192,17 +193,13 @@ public class RegistrationDetailActivity extends AppCompatActivity {
 
 
                         JSONObject jsonObjectSend = new JSONObject();
-                        try {
-                            jsonObjectSend.put(Constants.TAG_UserSaberaId,user.getSaberaId());
-                            jsonObjectSend.put(Constants.TAG_Name,user.getName());
-                            jsonObjectSend.put(Constants.TAG_Gender,user.getGender());
-                            jsonObjectSend.put(Constants.TAG_Birthday,user.getBirthday());
-                            jsonObjectSend.put(Constants.TAG_CATEGORIES,user.getCategories());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        jsonObjectSend.put(Constants.TAG_UserSaberaId,user.getSaberaId());
+                        jsonObjectSend.put(Constants.TAG_Name,user.getName());
+                        jsonObjectSend.put(Constants.TAG_Gender,user.getGender());
+                        jsonObjectSend.put(Constants.TAG_Birthday,user.getBirthday());
+                        jsonObjectSend.put(Constants.TAG_CATEGORIES,user.getCategories());
 
-                        if(jsonObjectSend!=null && jsonObjectSend.length()>0){
+                        if(jsonObjectSend!=null && jsonObjectSend.size()>0){
                             new RegDetailDoneButtonSendDataToServer().execute(jsonObjectSend);
                         }
 
@@ -241,26 +238,23 @@ public class RegistrationDetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(JSONObject jsonObjRec) {
             super.onPostExecute(jsonObjRec);
-            try{
-                if(jsonObjRec != null && jsonObjRec.length() > 0){
+            if(jsonObjRec != null && jsonObjRec.size() > 0){
 
 
 
-                    User user = PrefUtilsUser.getCurrentUser(RegistrationDetailActivity.this);
-                    user.setQuestions(jsonObjRec.getString(Constants.TAG_QUESTIONS));
-                    Intent intent = new Intent(RegistrationDetailActivity.this,BaseActivity.class);
-                    startActivity(intent);
-                    finish();
+                User user = PrefUtilsUser.getCurrentUser(RegistrationDetailActivity.this);
+                user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
+                user.setQnJsonArray((org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_QUESTIONS));
+                Intent intent = new Intent(RegistrationDetailActivity.this,BaseActivity.class);
+                startActivity(intent);
+                finish();
 
 
 
 
-                }
-                else
-                    Log.e(TAG,"jsonObjRec == null");
-            }catch (JSONException e) {
-                e.printStackTrace();
             }
+            else
+                Log.e(TAG,"jsonObjRec == null");
         }
     }
 

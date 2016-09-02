@@ -27,7 +27,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -93,7 +94,8 @@ public class HttpClient {
 				resultString = resultString.substring(1,resultString.length()-1); // remove wrapping "[" and "]"
 
 				// Transform the String into a JSONObject
-				JSONObject jsonObjRecv = new JSONObject(resultString);
+				JSONParser parser = new JSONParser();
+				JSONObject jsonObjRecv = (JSONObject)parser.parse(resultString);
 				// Raw DEBUG output of our received JSON object:
 				Log.i(TAG,"<JSONObject>\n"+jsonObjRecv.toString()+"\n</JSONObject>");
 
@@ -159,7 +161,8 @@ public class HttpClient {
 				//resultString = resultString.substring(1,resultString.length()-1); // remove wrapping "[" and "]"
 
 				// Transform the String into a JSONObject
-				JSONObject jsonObjRecv = new JSONObject(resultString);
+				JSONParser parser = new JSONParser();
+				JSONObject jsonObjRecv = (JSONObject)parser.parse(resultString);
 				// Raw DEBUG output of our received JSON object:
 				Log.i(TAG,"<JSONObject>\n"+jsonObjRecv.toString()+"\n</JSONObject>");
 
@@ -183,12 +186,12 @@ public class HttpClient {
 
     }
 
-	public static String getPostDataStringfromJsonObject(JSONObject params) throws Exception {
+	/*public static String getPostDataStringfromJsonObject(JSONObject params) throws Exception {
 
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
 
-		Iterator<String> itr = params.keys();
+		Iterator<String> itr = params.keys().;
 
 		while(itr.hasNext()){
 
@@ -206,7 +209,7 @@ public class HttpClient {
 
 		}
 		return result.toString();
-	}
+	}*/
 
 	private static String convertStreamToString(InputStream is) {
 		/*

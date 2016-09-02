@@ -1,6 +1,6 @@
 package com.example.avinashbehera.sabera.network;
 
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 /**
  * Created by avinashbehera on 23/08/16.

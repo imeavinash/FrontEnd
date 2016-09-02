@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "2491952122",
+    "firebase_url": "https://sabera-b6b6a.firebaseio.com",
+    "project_id": "sabera-b6b6a",
+    "storage_bucket": "sabera-b6b6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2491952122:android:f4b405b8e289d1ed",
+        "android_client_info": {
+          "package_name": "com.example.avinashbehera.sabera"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2491952122-rq37upveegnckqr4fmnc9594o9i93j36.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnp8Q98YCxFS2IIy41COYYv0AQf2quyMI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -17,8 +17,9 @@ import com.example.avinashbehera.sabera.util.Constants;
 import com.example.avinashbehera.sabera.util.PrefUtilsTempUser;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
 
+//import org.json.simple.JSONException;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 public class Registration1Activity extends AppCompatActivity {
 
@@ -86,13 +87,9 @@ public class Registration1Activity extends AppCompatActivity {
             }
 
             JSONObject jsonObjectSend = new JSONObject();
-            try {
-                jsonObjectSend.put(Constants.TAG_Email,email);
-                jsonObjectSend.put(Constants.TAG_PASSWORD,pwd);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if(jsonObjectSend!=null && jsonObjectSend.length()>0){
+            jsonObjectSend.put(Constants.TAG_Email,email);
+            jsonObjectSend.put(Constants.TAG_PASSWORD,pwd);
+            if(jsonObjectSend!=null && jsonObjectSend.size()>0){
                 new RegisterButtonSendDataToServer().execute(jsonObjectSend);
             }
 
@@ -119,12 +116,12 @@ public class Registration1Activity extends AppCompatActivity {
         protected void onPostExecute(JSONObject jsonObjRec) {
             super.onPostExecute(jsonObjRec);
             try{
-                if(jsonObjRec != null && jsonObjRec.length() > 0){
+                if(jsonObjRec != null && jsonObjRec.size() > 0){
 
 
 
                         User user = new User();
-                        user.setEmail(jsonObjRec.getString(Constants.TAG_Email).toString());
+                        user.setEmail(jsonObjRec.get(Constants.TAG_Email).toString());
                         user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
                         PrefUtilsUser.setCurrentUser(user,Registration1Activity.this);
                         Intent intent = new Intent(Registration1Activity.this, RegistrationDetailActivity.class);
@@ -137,7 +134,7 @@ public class Registration1Activity extends AppCompatActivity {
                 }
                 else
                     Log.e(TAG,"jsonObjRec == null");
-            }catch (JSONException e) {
+            }catch (Exception e) {
                 e.printStackTrace();
             }
         }

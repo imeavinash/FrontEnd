@@ -21,8 +21,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.widget.ProfilePictureView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+//import org.json.simple.JSONException;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

@@ -1,5 +1,6 @@
 package com.example.avinashbehera.sabera.Activity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -31,9 +32,12 @@ import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
+//import org.json.simple.simple.*;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -117,8 +121,30 @@ public class LoginActivity extends AppCompatActivity {
                 "public_profile","email","user_birthday"));
 
         fbLoginButton.registerCallback(callbackManager, mCallBack);
+        if(checkGooglePlayServices()){
+
+            Toast.makeText(this,"Google Play services is updated",Toast.LENGTH_LONG).show();
+
+        }
 
 
+    }
+
+    private boolean checkGooglePlayServices() {
+        final int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (status != ConnectionResult.SUCCESS) {
+            Log.e(TAG, GooglePlayServicesUtil.getErrorString(status));
+
+            // ask user to update google play services.
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, 1);
+            dialog.show();
+            return false;
+        } else {
+            Log.i(TAG, GooglePlayServicesUtil.getErrorString(status));
+            // google play services is updated.
+            //your code goes here...
+            return true;
+        }
     }
 
     View.OnClickListener loginButtonClickListener = new View.OnClickListener() {
@@ -142,14 +168,10 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             JSONObject jsonObjectSend = new JSONObject();
-            try {
-                jsonObjectSend.put(Constants.TAG_Email,email);
-                jsonObjectSend.put(Constants.TAG_PASSWORD,pwd);
-                jsonObjectSend.put(Constants.TAG_LOGIN_MODE,"non_fb");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if(jsonObjectSend!=null && jsonObjectSend.length()>0){
+            jsonObjectSend.put(Constants.TAG_Email,email);
+            jsonObjectSend.put(Constants.TAG_PASSWORD,pwd);
+            jsonObjectSend.put(Constants.TAG_LOGIN_MODE,"non_fb");
+            if(jsonObjectSend!=null && jsonObjectSend.size()>0){
                 new firstPageLoginButtonSendDataToServer().execute(jsonObjectSend);
             }
 
@@ -175,37 +197,34 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(JSONObject jsonObjRec) {
             super.onPostExecute(jsonObjRec);
-            try{
-                if(jsonObjRec != null && jsonObjRec.length() > 0){
+            if(jsonObjRec != null && jsonObjRec.size() > 0){
 
-                    if(jsonObjRec.get(Constants.TAG_User_Exists_Status).toString().equalsIgnoreCase("new")){
+                if(jsonObjRec.get(Constants.TAG_User_Exists_Status).toString().equalsIgnoreCase("new")){
 
-                        Toast.makeText(LoginActivity.this,"The username password doesn't exist.Please Register",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this,"The username password doesn't exist.Please Register",Toast.LENGTH_LONG).show();
 
-                    }else{
+                }else{
 
-                        User user = new User();
-                        user.setEmail(jsonObjRec.getString(Constants.TAG_Email).toString());
-                        user.setName(jsonObjRec.getString(Constants.TAG_Name).toString());
-                        user.setGender(jsonObjRec.getString(Constants.TAG_Gender).toString());
-                        user.setBirthday(jsonObjRec.getString(Constants.TAG_Birthday).toString());
-                        user.setCategories(jsonObjRec.getString(Constants.TAG_CATEGORIES).toString());
-                        user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
-                        user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
-                        PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
-                        Intent intent = new Intent(LoginActivity.this, BaseActivity.class);
-                        startActivity(intent);
-                        finish();
-
-                    }
-
+                    User user = new User();
+                    user.setEmail(jsonObjRec.get(Constants.TAG_Email).toString());
+                    user.setName(jsonObjRec.get(Constants.TAG_Name).toString());
+                    user.setGender(jsonObjRec.get(Constants.TAG_Gender).toString());
+                    user.setBirthday(jsonObjRec.get(Constants.TAG_Birthday).toString());
+                    user.setCategories(jsonObjRec.get(Constants.TAG_CATEGORIES).toString());
+                    user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
+                    user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
+                    user.setQnJsonArray((org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_QUESTIONS));
+                    PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
+                    Intent intent = new Intent(LoginActivity.this, BaseActivity.class);
+                    startActivity(intent);
+                    finish();
 
                 }
-                else
-                    Log.e(TAG,"jsonObjRec == null");
-            }catch (JSONException e) {
-                e.printStackTrace();
+
+
             }
+            else
+                Log.e(TAG,"jsonObjRec == null");
         }
     }
 
@@ -266,19 +285,21 @@ public class LoginActivity extends AppCompatActivity {
         GraphRequest request = GraphRequest.newMeRequest(
                 mAccessToken,
                 new GraphRequest.GraphJSONObjectCallback() {
+
                     @Override
                     public void onCompleted(
-                            JSONObject object,
+                            org.json.JSONObject object,
                             GraphResponse response) {
 
                         Log.e("response: ", response + "");
                         try {
 
-                            //String facebookID = object.getString("id").toString();
+                            //String facebookID = object.get("id").toString();
                             //Log.d("LoginActivity","in onCompleted graphRequest userId = " + facebookID);
-                            String email = object.getString("email").toString();
-                            String name = object.getString("name").toString();
-                            String gender = object.getString("gender").toString();
+                            String email = object.get("email").toString();
+
+                            String name = object.get("name").toString();
+                            String gender = object.get("gender").toString();
                             User tempUser = new User();
                             tempUser.setEmail(email);
                             tempUser.setGender(gender);
@@ -326,54 +347,51 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(JSONObject jsonObjRec) {
             super.onPostExecute(jsonObjRec);
-            try{
-                if(jsonObjRec != null && jsonObjRec.length() > 0){
+            if(jsonObjRec != null && jsonObjRec.size() > 0){
 
-                    String status = jsonObjRec.getString(Constants.TAG_User_Exists_Status);
-                    String saberaID = jsonObjRec.getString(Constants.TAG_UserSaberaId);
-                    if(status.equalsIgnoreCase("new")){
+                String status = jsonObjRec.get(Constants.TAG_User_Exists_Status).toString();
+                String saberaID = jsonObjRec.get(Constants.TAG_UserSaberaId).toString();
+                if(status.equalsIgnoreCase("new")){
 
-                        User user = new User();
-                        User tempUser = PrefUtilsTempUser.getCurrentTempUser(LoginActivity.this);
-                        user.setSaberaId(saberaID);
-                        user.setEmail(tempUser.getEmail());
-                        user.setName(tempUser.getName());
-                        user.setGender(tempUser.getGender());
-                        PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
-                        PrefUtilsTempUser.clearCurrentTempUser(LoginActivity.this);
-                        Intent intent = new Intent(LoginActivity.this,RegistrationDetailActivity.class);
-                        startActivity(intent);
-                        finish();
+                    User user = new User();
+                    User tempUser = PrefUtilsTempUser.getCurrentTempUser(LoginActivity.this);
+                    user.setSaberaId(saberaID);
+                    user.setEmail(tempUser.getEmail());
+                    user.setName(tempUser.getName());
+                    user.setGender(tempUser.getGender());
+                    PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
+                    PrefUtilsTempUser.clearCurrentTempUser(LoginActivity.this);
+                    Intent intent = new Intent(LoginActivity.this,RegistrationDetailActivity.class);
+                    startActivity(intent);
+                    finish();
 
-                    }else{
+                }else{
 
-                        User user = new User();
-                        user.setEmail(jsonObjRec.getString(Constants.TAG_Email).toString());
-                        user.setName(jsonObjRec.getString(Constants.TAG_Name).toString());
-                        user.setGender(jsonObjRec.getString(Constants.TAG_Gender).toString());
-                        user.setBirthday(jsonObjRec.getString(Constants.TAG_Birthday).toString());
-                        user.setCategories(jsonObjRec.getString(Constants.TAG_CATEGORIES).toString());
-                        user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
-                        user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
-                        PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
-                        PrefUtilsTempUser.clearCurrentTempUser(LoginActivity.this);
-                        Intent intent = new Intent(LoginActivity.this, BaseActivity.class);
-                        startActivity(intent);
-                        finish();
+                    User user = new User();
+                    user.setEmail(jsonObjRec.get(Constants.TAG_Email).toString());
+                    user.setName(jsonObjRec.get(Constants.TAG_Name).toString());
+                    user.setGender(jsonObjRec.get(Constants.TAG_Gender).toString());
+                    user.setBirthday(jsonObjRec.get(Constants.TAG_Birthday).toString());
+                    user.setCategories(jsonObjRec.get(Constants.TAG_CATEGORIES).toString());
+                    user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
+                    user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
+                    user.setQnJsonArray((org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_QUESTIONS));
+                    PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
+                    PrefUtilsTempUser.clearCurrentTempUser(LoginActivity.this);
+                    Intent intent = new Intent(LoginActivity.this, BaseActivity.class);
+                    startActivity(intent);
+                    finish();
 
-
-
-
-                    }
 
 
 
                 }
-                else
-                    Log.e(TAG,"jsonObjRec == null");
-            }catch (JSONException e) {
-                e.printStackTrace();
+
+
+
             }
+            else
+                Log.e(TAG,"jsonObjRec == null");
         }
     }
 

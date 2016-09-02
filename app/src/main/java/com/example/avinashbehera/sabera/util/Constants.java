@@ -46,6 +46,9 @@ public class Constants {
     public static final String RegDetailDoneButtonSendDataToServer = "http://192.168.0.189:9000/storeUserProfile";
     public static final String FbLoginCheckURL = "http://192.168.0.189:9000/checkUserIfFbUserExists";
     public static final String sendPostQnToServerURL = "http://192.168.0.189:9000/postQuestion";
+    public static final String sendAnswerToServerURL = "http://192.168.0.189:9000/postAnswer";
+    public static final String sendGcmTokenLoginToServerURL = "http://192.168.0.189:9000/storeDeviceToken";
+    public static final String sendGcmTokenLogoutToServerURL = "http://192.168.0.189:9000/postQuestion";
 
 
     public static final int POST_QN_TYPE_NONE = 0;
@@ -74,6 +77,39 @@ public class Constants {
     public static final String TAG_PostQn_Status = "status";
     public static final String VALUE_PostQn_Objective = "objective";
     public static final String VALUE_PostQn_Subjective = "subjective";
+
+    public static final String TAG_SEEQN_QN_ID = "qid";
+    public static final String TAG_SEEQN_QNR_ID = "uid";
+    public static final String TAG_SEEQN_QN_TEXT = "qstring";
+    public static final String TAG_SEEQN_QN_TYPE = "qtypes";
+    public static final String TAG_SEEQN_OPTION1 = "option1";
+    public static final String TAG_SEEQN_OPTION2 = "option2";
+    public static final String TAG_SEEQN_OPTION3 = "option3";
+    public static final String TAG_SEEQN_OPTION4 = "option4";
+    public static final String TAG_SEEQN_Option1_Status = "status1";
+    public static final String TAG_SEEQN_Option2_Status = "status2";
+    public static final String TAG_SEEQN_Option3_Status = "status3";
+    public static final String TAG_SEEQN_Option4_Status = "status4";
+    public static final String TAG_SEEQN_Ans_Text = "proposed_answer";
+    public static final String TAG_SEEQN_Keywords = "proposed_keywords";
+    public static final String TAG_SEEQN_Timer = "timer";
+    public static final String TAG_SEEQN_Hint = "hints";
+    public static final String VALUE_SEEQN_Objective = "objective";
+    public static final String VALUE_SEEQN_Subjective = "subjective";
+
+    public static final String TAG_AnsQn_Qn_ID = "qid";
+    public static final String TAG_AnsQn_UserId_Qnr = "uid_questioner";
+    public static final String TAG_AnsQn_UserId_Answr = "uid_answerer";
+    public static final String TAG_AnsQn_Qn_Type = "qtype";
+    public static final String TAG_AnsQn_Ans_Qnr = "answers_questioner";
+    public static final String TAG_AnsQn_Ans_Answr = "answer_answerer";
+    public static final String TAG_AnsQn_answers = "answer";
+    public static final String TAG_AnsQn_timestamp = "answer_time";
+
+    public static final String TAG_SendRegToken_token = "device_token";
+    public static final String TAG_SendRegToken_userId = "uid";
+
+
 
 
 
