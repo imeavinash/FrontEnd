@@ -36,6 +36,7 @@ public class Registration1Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e(TAG,"regButtonClickListener - f - onCreate");
         setContentView(R.layout.activity_registration1);
 
         emailEdtTxt=(EditText)findViewById(R.id.emailReg1EdtTxt);

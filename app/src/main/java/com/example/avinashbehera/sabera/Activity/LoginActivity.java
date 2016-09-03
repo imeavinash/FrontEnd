@@ -249,10 +249,15 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             User tempUser = new User();
+            Log.e(TAG,"regButtonClickListener - a - new User");
             tempUser.setEmail(email);
+            Log.e(TAG,"regButtonClickListener - b - set Email");
             tempUser.setPwd(pwd);
+            Log.e(TAG,"regButtonClickListener - c - set pwd");
             PrefUtilsTempUser.setCurrentTempUser(tempUser,LoginActivity.this);
+            Log.e(TAG,"regButtonClickListener - d - set currentTempUser");
             Intent intent = new Intent(LoginActivity.this,Registration1Activity.class);
+            Log.e(TAG,"regButtonClickListener - e - new Intent");
             startActivity(intent);
 
         }

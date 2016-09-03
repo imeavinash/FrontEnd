@@ -1,6 +1,7 @@
 package com.example.avinashbehera.sabera.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.avinashbehera.sabera.model.User;
 
@@ -9,10 +10,16 @@ import com.example.avinashbehera.sabera.model.User;
  */
 public class PrefUtilsTempUser {
 
+    private static final String TAG = PrefUtilsTempUser.class.getSimpleName();
+
     public static void setCurrentTempUser(User currentTempUser, Context ctx){
+        Log.e(TAG,"regButtonClickListener - f - onCreate");
         ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "temp_user_prefs", 0);
+        Log.e(TAG,"regButtonClickListener - g");
         complexPreferences.putObject("current_temp_user_value", currentTempUser);
+        Log.e(TAG,"regButtonClickListener - h");
         complexPreferences.commit();
+        Log.e(TAG,"regButtonClickListener - i");
     }
 
     public static User getCurrentTempUser(Context ctx){

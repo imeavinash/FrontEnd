@@ -38,6 +38,7 @@ import com.example.avinashbehera.sabera.fragments.MoreFragment;
 import com.example.avinashbehera.sabera.fragments.PostQnFragment;
 import com.example.avinashbehera.sabera.fragments.SeeQnFragment;
 import com.example.avinashbehera.sabera.gcm.GCMRegistrationIntentService;
+import com.example.avinashbehera.sabera.gcm.GCMTokenRefreshListenerService;
 import com.example.avinashbehera.sabera.model.User;
 import com.example.avinashbehera.sabera.model.UserSeeQn;
 import com.example.avinashbehera.sabera.network.HttpClient;
@@ -101,6 +102,26 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        User user = PrefUtilsUser.getCurrentUser(BaseActivity.this);
+        String regToken = GCMTokenRefreshListenerService.refreshedToken;
+        if(user.getGcmRegToken()==null || user.getGcmRegToken().equalsIgnoreCase("") || !regToken.equals(user.getGcmRegToken())){
+            Log.d(TAG,"user gcmToken = null or = blank or not equal to current token");
+
+
+                user.setGcmRegToken(GCMTokenRefreshListenerService.refreshedToken);
+                PrefUtilsUser.setCurrentUser(user,this);
+                JSONObject jsonObjectSend = new JSONObject();
+
+                jsonObjectSend.put(Constants.TAG_SendRegToken_token,GCMTokenRefreshListenerService.refreshedToken);
+                jsonObjectSend.put(Constants.TAG_SendRegToken_userId,PrefUtilsUser.getCurrentUser(getApplication()).getSaberaId());
+
+
+                new sendRegTokenToServer().execute(jsonObjectSend);
+
+        }
+
+
+
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
 
             //When the broadcast received
@@ -108,9 +129,11 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
             @Override
             public void onReceive(Context context, Intent intent) {
+
+                Log.d(TAG,"mRegistrationBroadcastReceiver - onReceive");
                 //If the broadcast has received with success
                 //that means device is registered successfully
-                if (intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_SUCCESS)) {
+                if (intent.getAction().equals(GCMTokenRefreshListenerService.REGISTRATION_SUCCESS)) {
                     //Getting the registration token from the intent
                     String token = intent.getStringExtra("token");
                     Log.d(TAG,"gcm token ="+token);
@@ -157,64 +180,70 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
             //If play service is available
         } else {
             //Starting intent to register device
-            Intent intent = new Intent(this, GCMRegistrationIntentService.class);
-            startService(intent);
+            //Intent intent = new Intent(this, GCMTokenRefreshListenerService.class);
+            //startService(intent);
         }
 
         qnArrayList = new ArrayList<>();
-        User user = PrefUtilsUser.getCurrentUser(this);
-        String jsonString = user.getQnJsonArray().toJSONString();
-        JSONParser parser = new JSONParser();
+        user = PrefUtilsUser.getCurrentUser(this);
+        JSONArray jArray =  user.getQnJsonArray();
         JSONArray arr = null;
-        try {
-            arr = (JSONArray) parser.parse(jsonString);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        if(jArray != null){
+            String jsonString = jArray.toJSONString();
+            JSONParser parser = new JSONParser();
+
+            try {
+                arr = (JSONArray) parser.parse(jsonString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }else{
+            Log.d(TAG,"jArray = null");
         }
 
-        //JSONArray qnJsonArray = user.getQnJsonArray();
-        for (int i = 0; i < arr.size(); i++) {
-            Log.d(TAG, "BaseActivity - onCreate - qnJsonArray loop - i = " + i);
-            UserSeeQn qn = new UserSeeQn();
-            //Log.d(TAG, qnJsonArray.toJSONString());
-            JSONObject jsonObject = (JSONObject) arr.get(i);
-            qn.setqId(jsonObject.get(Constants.TAG_SEEQN_QN_ID).toString());
-            qn.setqId(jsonObject.get(Constants.TAG_SEEQN_QNR_ID).toString());
-            qn.setQnText(jsonObject.get(Constants.TAG_SEEQN_QN_TEXT).toString());
-            qn.setHintText(jsonObject.get(Constants.TAG_SEEQN_Hint).toString());
-            qn.setTimer(jsonObject.get(Constants.TAG_SEEQN_Timer).toString());
-            qn.setQnType(jsonObject.get(Constants.TAG_SEEQN_QN_TYPE).toString());
-            if (qn.getQnType().equalsIgnoreCase(Constants.VALUE_SEEQN_Objective)) {
+        if(arr!=null){
+            for (int i = 0; i < arr.size(); i++) {
+                Log.d(TAG, "BaseActivity - onCreate - qnJsonArray loop - i = " + i);
+                UserSeeQn qn = new UserSeeQn();
+                //Log.d(TAG, qnJsonArray.toJSONString());
+                JSONObject jsonObject = (JSONObject) arr.get(i);
+                qn.setqId(jsonObject.get(Constants.TAG_SEEQN_QN_ID).toString());
+                qn.setuId(jsonObject.get(Constants.TAG_SEEQN_QNR_ID).toString());
+                qn.setQnText(jsonObject.get(Constants.TAG_SEEQN_QN_TEXT).toString());
+                qn.setHintText(jsonObject.get(Constants.TAG_SEEQN_Hint).toString());
+                qn.setTimer(jsonObject.get(Constants.TAG_SEEQN_Timer).toString());
+                qn.setQnType(jsonObject.get(Constants.TAG_SEEQN_QN_TYPE).toString());
+                if (qn.getQnType().equalsIgnoreCase(Constants.VALUE_SEEQN_Objective)) {
 
-                qn.setOption1(jsonObject.get(Constants.TAG_SEEQN_OPTION1).toString());
-                qn.setOption2(jsonObject.get(Constants.TAG_SEEQN_OPTION2).toString());
-                qn.setOption3(jsonObject.get(Constants.TAG_SEEQN_OPTION3).toString());
-                qn.setOption4(jsonObject.get(Constants.TAG_SEEQN_OPTION4).toString());
+                    qn.setOption1(jsonObject.get(Constants.TAG_SEEQN_OPTION1).toString());
+                    qn.setOption2(jsonObject.get(Constants.TAG_SEEQN_OPTION2).toString());
+                    qn.setOption3(jsonObject.get(Constants.TAG_SEEQN_OPTION3).toString());
+                    qn.setOption4(jsonObject.get(Constants.TAG_SEEQN_OPTION4).toString());
 
-                if (jsonObject.get(Constants.TAG_SEEQN_Option1_Status).toString().equalsIgnoreCase("true"))
-                    qn.setStatus1(true);
-                else
-                    qn.setStatus1(false);
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option1_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus1(true);
+                    else
+                        qn.setStatus1(false);
 
-                if (jsonObject.get(Constants.TAG_SEEQN_Option2_Status).toString().equalsIgnoreCase("true"))
-                    qn.setStatus2(true);
-                else
-                    qn.setStatus2(false);
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option2_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus2(true);
+                    else
+                        qn.setStatus2(false);
 
-                if (jsonObject.get(Constants.TAG_SEEQN_Option3_Status).toString().equalsIgnoreCase("true"))
-                    qn.setStatus3(true);
-                else
-                    qn.setStatus3(false);
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option3_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus3(true);
+                    else
+                        qn.setStatus3(false);
 
-                if (jsonObject.get(Constants.TAG_SEEQN_Option4_Status).toString().equalsIgnoreCase("true"))
-                    qn.setStatus4(true);
-                else
-                    qn.setStatus4(false);
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option4_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus4(true);
+                    else
+                        qn.setStatus4(false);
 
 
-            } else {
+                } else {
 
-                qn.setAnsText(jsonObject.get(Constants.TAG_SEEQN_Ans_Text).toString());
+                    qn.setAnsText(jsonObject.get(Constants.TAG_SEEQN_Ans_Text).toString());
                     String keywords = jsonObject.get(Constants.TAG_SEEQN_Keywords).toString();
                     String[] keyw = keywords.split(",");
                     ArrayList<String> keywordsArray = new ArrayList<>();
@@ -222,10 +251,17 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
                         keywordsArray.add(keyw[j]);
                     qn.setKeywords(keywordsArray);
 
-            }
-            qnArrayList.add(qn);
+                }
+                qnArrayList.add(qn);
 
+            }
+        }else{
+            Log.d(TAG,"arr = null");
         }
+
+
+        //JSONArray qnJsonArray = user.getQnJsonArray();
+
 
         user.setQuestionArray(qnArrayList);
         PrefUtilsUser.setCurrentUser(user, this);
@@ -274,7 +310,7 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
     protected void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(GCMRegistrationIntentService.REGISTRATION_SUCCESS));
+                new IntentFilter(GCMTokenRefreshListenerService.REGISTRATION_SUCCESS));
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(GCMRegistrationIntentService.REGISTRATION_ERROR));
     }

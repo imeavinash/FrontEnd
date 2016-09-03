@@ -245,6 +245,7 @@ public class RegistrationDetailActivity extends AppCompatActivity {
                 User user = PrefUtilsUser.getCurrentUser(RegistrationDetailActivity.this);
                 user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
                 user.setQnJsonArray((org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_QUESTIONS));
+                PrefUtilsUser.setCurrentUser(user,RegistrationDetailActivity.this);
                 Intent intent = new Intent(RegistrationDetailActivity.this,BaseActivity.class);
                 startActivity(intent);
                 finish();

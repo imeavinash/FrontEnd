@@ -8,27 +8,38 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.example.avinashbehera.sabera.Activity.BaseActivity;
 import com.example.avinashbehera.sabera.R;
 import com.google.android.gms.gcm.GcmListenerService;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.Map;
 
 /**
  * Created by avinashbehera on 02/09/16.
  */
-public class GCMPushReceiverService extends GcmListenerService {
+public class GCMPushReceiverService extends FirebaseMessagingService {
+
+    public static final String TAG = GCMPushReceiverService.class.getSimpleName();
 
     //This method will be called on every new message received
     @Override
-    public void onMessageReceived(String from, Bundle data) {
-        //Getting the message from the bundle
-        String message = data.get("message").toString();
+    public void onMessageReceived(RemoteMessage message) {
+        Log.d(TAG,"<Notification>" +
+                "onMessageReceived"+"" +
+                "<Notification>");
+        String from = message.getFrom();
+        Map data = message.getData();
         //Displaying a notiffication with the message
-        sendNotification(message);
+        sendNotification(data.toString());
     }
 
     //This method is generating a notification and displaying the notification
     private void sendNotification(String message) {
+        Log.d(TAG,"send Notification");
         Intent intent = new Intent(this, BaseActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         int requestCode = 0;
@@ -41,6 +52,6 @@ public class GCMPushReceiverService extends GcmListenerService {
                 .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0, noBuilder.build()); //0 = ID of notification
+        notificationManager.notify((int)System.currentTimeMillis(), noBuilder.build()); //0 = ID of notification
     }
 }

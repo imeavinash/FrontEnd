@@ -4,12 +4,13 @@ import android.widget.LinearLayout;
 
 import org.json.simple.JSONArray;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by avinashbehera on 20/08/16.
  */
-public class User {
+public class User implements Serializable{
 
     public User() {
     }
@@ -30,15 +31,15 @@ public class User {
         this.pwd = pwd;
     }
 
-    private ArrayList<LinearLayout> qnLLArray;
+    //private ArrayList<LinearLayout> qnLLArray;
 
-    public ArrayList<LinearLayout> getQnLLArray() {
-        return qnLLArray;
-    }
-
-    public void setQnLLArray(ArrayList<LinearLayout> qnLLArray) {
-        this.qnLLArray = qnLLArray;
-    }
+//    public ArrayList<LinearLayout> getQnLLArray() {
+//        return qnLLArray;
+//    }
+//
+//    public void setQnLLArray(ArrayList<LinearLayout> qnLLArray) {
+//        this.qnLLArray = qnLLArray;
+//    }
 
     private String name;
 

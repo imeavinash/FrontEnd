@@ -72,9 +72,14 @@ public class SeeQnFragment extends Fragment {
         timerTxtView = (TextView)rootView.findViewById(R.id.timertxtview);
 
 
+        qnArrayList = user.getQuestionArray();
+        if(qnArrayList != null && qnArrayList.size()>0){
+            qnNos = qnArrayList.size();
+            currentQnNo = qnArrayList.size()-1;
+            addQnsToLayout();
+        }
 
 
-        addQnsToLayout();
 
 
 
@@ -85,23 +90,19 @@ public class SeeQnFragment extends Fragment {
 
     public  void addQnsToLayout(){
 
-        User user = PrefUtilsUser.getCurrentUser(getContext());
-
-        qnArrayList = user.getQuestionArray();
-        qnNos = qnArrayList.size();
-        currentQnNo = qnArrayList.size()-1;
 
 
-        qnLLArrayList = new ArrayList<>();
 
-        for(int i=0;i<qnArrayList.size();i++){
-            UserSeeQn qn = qnArrayList.get(i);
+        //qnLLArrayList = new ArrayList<>();
+
+
+            UserSeeQn qn = qnArrayList.get(currentQnNo);
             if (qn.getQnType().equalsIgnoreCase("objective")) {
 
                 LayoutInflater inflater1 = LayoutInflater.from(getContext());
-                LinearLayout qn1 = (LinearLayout)inflater1.inflate(R.layout.see_question_objective,null);
+                final LinearLayout qn1 = (LinearLayout)inflater1.inflate(R.layout.see_question_objective,null);
                 qnContainer.addView(qn1);
-                qnLLArrayList.add(qn1);
+                //qnLLArrayList.add(qn1);
 
 
                 TextView qnTxt = (TextView)qn1.findViewById(R.id.seeQnObjQnText);
@@ -127,11 +128,11 @@ public class SeeQnFragment extends Fragment {
 
 
                         UserSeeQn qnAnswered = qnArrayList.get(currentQnNo);
-                        LinearLayout qnLL = qnLLArrayList.get(currentQnNo);
-                        CheckBox chkbox1 = (CheckBox)qnLL.findViewById(R.id.opt1chkbox);
-                        CheckBox chkbox2 = (CheckBox)qnLL.findViewById(R.id.opt2chkbox);
-                        CheckBox chkbox3 = (CheckBox)qnLL.findViewById(R.id.opt3chkbox);
-                        CheckBox chkbox4 = (CheckBox)qnLL.findViewById(R.id.opt4chkbox);
+
+                        CheckBox chkbox1 = (CheckBox)qn1.findViewById(R.id.opt1chkbox);
+                        CheckBox chkbox2 = (CheckBox)qn1.findViewById(R.id.opt2chkbox);
+                        CheckBox chkbox3 = (CheckBox)qn1.findViewById(R.id.opt3chkbox);
+                        CheckBox chkbox4 = (CheckBox)qn1.findViewById(R.id.opt4chkbox);
                         JSONObject jsonObjectSend = new JSONObject();
 
 
@@ -205,13 +206,16 @@ public class SeeQnFragment extends Fragment {
                         if(jsonObjectSend!=null && jsonObjectSend.size()>0){
                             new sendAnsToServer().execute(jsonObjectSend);
                         }
-                        qnContainer.removeViewAt(currentQnNo);
+
+                        qnContainer.removeAllViews();
+
                         currentQnNo--;
                         if(currentQnNo>=0){
                             int nextTimer = Integer.parseInt(qnArrayList.get(currentQnNo).getTimer());
                             nextTimer = nextTimer*1000;
                             countDownTimer=new MyCountDownTimer(nextTimer,1000);
                             countDownTimer.start();
+                            addQnsToLayout();
                         }
                     }
                 });
@@ -225,9 +229,9 @@ public class SeeQnFragment extends Fragment {
             else{
 
                 LayoutInflater inflater1 = LayoutInflater.from(getContext());
-                LinearLayout qn1 = (LinearLayout)inflater1.inflate(R.layout.see_qn_subjective,null);
+                final LinearLayout qn1 = (LinearLayout)inflater1.inflate(R.layout.see_qn_subjective,null);
                 qnContainer.addView(qn1);
-                qnLLArrayList.add(qn1);
+                //qnLLArrayList.add(qn1);
 
 
                 TextView qnTxt = (TextView)qn1.findViewById(R.id.seeQnSubjQnText);
@@ -241,21 +245,23 @@ public class SeeQnFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
 
+                        countDownTimer.cancel();
+
 
 
 
 
 
                         UserSeeQn qnAnswered = qnArrayList.get(currentQnNo);
-                        LinearLayout qnLL = qnLLArrayList.get(currentQnNo);
-                        EditText ansTxt = (EditText)qnLL.findViewById(R.id.ansEditText);
+                        //LinearLayout qnLL = qnLLArrayList.get(currentQnNo);
+                        EditText ansTxt = (EditText)qn1.findViewById(R.id.ansEditText);
                         String ans = ansTxt.getText().toString();
                         if(ans==null || ans.equalsIgnoreCase("")){
                             Toast.makeText(getContext(),"Please enter answer",Toast.LENGTH_LONG).show();
                             return;
                         }
 
-                        countDownTimer.cancel();
+                        //countDownTimer.cancel();
 
                         JSONObject jsonObjectSend = new JSONObject();
 
@@ -301,13 +307,15 @@ public class SeeQnFragment extends Fragment {
                         if(jsonObjectSend!=null && jsonObjectSend.size()>0){
                             new sendAnsToServer().execute(jsonObjectSend);
                         }
-                        qnContainer.removeViewAt(currentQnNo);
+                        //qnContainer.removeViewAt(currentQnNo);
+                        qnContainer.removeAllViews();
                         currentQnNo--;
                         if(currentQnNo>=0){
                             int nextTimer = Integer.parseInt(qnArrayList.get(currentQnNo).getTimer());
                             nextTimer = nextTimer*1000;
                             countDownTimer=new MyCountDownTimer(nextTimer,1000);
                             countDownTimer.start();
+                            addQnsToLayout();
                         }
                     }
                 });
@@ -315,21 +323,28 @@ public class SeeQnFragment extends Fragment {
                 Log.d(TAG,"qn = "+qn.getQnText());
 
             }
+
+        if(currentQnNo == qnNos-1){
+            int firstQnTimer = Integer.parseInt(qnArrayList.get(currentQnNo).getTimer());
+            firstQnTimer=firstQnTimer*1000;
+            countDownTimer=new MyCountDownTimer(firstQnTimer,1000);
+            countDownTimer.start();
         }
+
+
 
         //user.setQnLLArray(qnLLArrayList);
         //PrefUtilsUser.setCurrentUser(user,getContext());
 
-        int firstQnTimer = Integer.parseInt(qnArrayList.get(currentQnNo).getTimer());
-        firstQnTimer=firstQnTimer*1000;
-        countDownTimer=new MyCountDownTimer(firstQnTimer,1000);
-        countDownTimer.start();
+
 
     }
 
     public class MyCountDownTimer extends CountDownTimer {
 
-        public long currentTime;
+        //public static final String TAG = MyCountDownTimer.class.getSimpleName();
+
+        public long currentTime = 0;
 
         public MyCountDownTimer(long startTime, long interval) {
             super(startTime, interval);
@@ -340,10 +355,20 @@ public class SeeQnFragment extends Fragment {
         @Override
         public void onFinish() {
 
+            Log.d(TAG,"MyCountDownTimer - onFinish");
+
             timerTxtView.setText("0");
             if(currentTime==1){
-                qnContainer.removeViewAt(currentQnNo);
+                qnContainer.removeAllViews();
+                //qnContainer.removeViewAt(currentQnNo);
                 currentQnNo--;
+                if(currentQnNo>=0){
+                    int nextTimer = Integer.parseInt(qnArrayList.get(currentQnNo).getTimer());
+                    nextTimer = nextTimer*1000;
+                    countDownTimer=new MyCountDownTimer(nextTimer,1000);
+                    countDownTimer.start();
+                    addQnsToLayout();
+                }
             }
         }
 

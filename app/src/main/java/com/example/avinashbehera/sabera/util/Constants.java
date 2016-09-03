@@ -101,7 +101,7 @@ public class Constants {
     public static final String TAG_AnsQn_UserId_Qnr = "uid_questioner";
     public static final String TAG_AnsQn_UserId_Answr = "uid_answerer";
     public static final String TAG_AnsQn_Qn_Type = "qtype";
-    public static final String TAG_AnsQn_Ans_Qnr = "answers_questioner";
+    public static final String TAG_AnsQn_Ans_Qnr = "answer_questioner";
     public static final String TAG_AnsQn_Ans_Answr = "answer_answerer";
     public static final String TAG_AnsQn_answers = "answer";
     public static final String TAG_AnsQn_timestamp = "answer_time";
