@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.avinashbehera.sabera.R;
 import com.example.avinashbehera.sabera.model.User;
+import com.example.avinashbehera.sabera.model.UserSeeQn;
 import com.example.avinashbehera.sabera.util.Constants;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
 import com.example.avinashbehera.sabera.util.Utility;
@@ -24,7 +25,10 @@ import com.example.avinashbehera.sabera.network.HttpClient;
 
 //import org.json.simple.JSONException;
 import org.json.JSONException;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -240,12 +244,7 @@ public class RegistrationDetailActivity extends AppCompatActivity {
             super.onPostExecute(jsonObjRec);
             if(jsonObjRec != null && jsonObjRec.size() > 0){
 
-
-
-                User user = PrefUtilsUser.getCurrentUser(RegistrationDetailActivity.this);
-                user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
-                user.setQnJsonArray((org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_QUESTIONS));
-                PrefUtilsUser.setCurrentUser(user,RegistrationDetailActivity.this);
+                setUserNewQns(jsonObjRec);
                 Intent intent = new Intent(RegistrationDetailActivity.this,BaseActivity.class);
                 startActivity(intent);
                 finish();
@@ -257,6 +256,96 @@ public class RegistrationDetailActivity extends AppCompatActivity {
             else
                 Log.e(TAG,"jsonObjRec == null");
         }
+    }
+
+    public void setUserNewQns(JSONObject jsonObjRec){
+
+        User user = PrefUtilsUser.getCurrentUser(this);
+
+        user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
+        user.setQnJsonArray((org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_QUESTIONS));
+        ArrayList<UserSeeQn> qnArrayList = new ArrayList<>();
+
+        JSONArray jArray =  user.getQnJsonArray();
+        JSONArray arr = null;
+        if(jArray != null){
+            String jsonString = jArray.toJSONString();
+            JSONParser parser = new JSONParser();
+
+            try {
+                arr = (JSONArray) parser.parse(jsonString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }else{
+            Log.d(TAG,"jArray = null");
+        }
+
+        if(arr!=null){
+            for (int i = 0; i < arr.size(); i++) {
+                Log.d(TAG, "BaseActivity - onCreate - qnJsonArray loop - i = " + i);
+                UserSeeQn qn = new UserSeeQn();
+                //Log.d(TAG, qnJsonArray.toJSONString());
+                JSONObject jsonObject = (JSONObject) arr.get(i);
+                qn.setqId(jsonObject.get(Constants.TAG_SEEQN_QN_ID).toString());
+                qn.setuId(jsonObject.get(Constants.TAG_SEEQN_QNR_ID).toString());
+                qn.setQnText(jsonObject.get(Constants.TAG_SEEQN_QN_TEXT).toString());
+                qn.setHintText(jsonObject.get(Constants.TAG_SEEQN_Hint).toString());
+                qn.setTimer(jsonObject.get(Constants.TAG_SEEQN_Timer).toString());
+                qn.setQnType(jsonObject.get(Constants.TAG_SEEQN_QN_TYPE).toString());
+                if (qn.getQnType().equalsIgnoreCase(Constants.VALUE_SEEQN_Objective)) {
+
+                    qn.setOption1(jsonObject.get(Constants.TAG_SEEQN_OPTION1).toString());
+                    qn.setOption2(jsonObject.get(Constants.TAG_SEEQN_OPTION2).toString());
+                    qn.setOption3(jsonObject.get(Constants.TAG_SEEQN_OPTION3).toString());
+                    qn.setOption4(jsonObject.get(Constants.TAG_SEEQN_OPTION4).toString());
+
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option1_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus1(true);
+                    else
+                        qn.setStatus1(false);
+
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option2_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus2(true);
+                    else
+                        qn.setStatus2(false);
+
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option3_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus3(true);
+                    else
+                        qn.setStatus3(false);
+
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option4_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus4(true);
+                    else
+                        qn.setStatus4(false);
+
+
+                } else {
+
+                    qn.setAnsText(jsonObject.get(Constants.TAG_SEEQN_Ans_Text).toString());
+                    String keywords = jsonObject.get(Constants.TAG_SEEQN_Keywords).toString();
+                    String[] keyw = keywords.split(",");
+                    ArrayList<String> keywordsArray = new ArrayList<>();
+                    for(int j=0;j<keyw.length;j++)
+                        keywordsArray.add(keyw[j]);
+                    qn.setKeywords(keywordsArray);
+
+                }
+                qnArrayList.add(qn);
+
+            }
+        }else{
+            Log.d(TAG,"arr = null");
+        }
+
+
+        //JSONArray qnJsonArray = user.getQnJsonArray();
+
+
+        user.setQuestionArray(qnArrayList);
+        PrefUtilsUser.setCurrentUser(user,RegistrationDetailActivity.this);
+
     }
 
 

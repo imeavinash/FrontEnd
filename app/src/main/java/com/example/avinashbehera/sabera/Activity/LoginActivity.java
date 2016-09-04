@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.avinashbehera.sabera.R;
 import com.example.avinashbehera.sabera.model.User;
+import com.example.avinashbehera.sabera.model.UserSeeQn;
 import com.example.avinashbehera.sabera.util.Constants;
 import com.example.avinashbehera.sabera.util.PrefUtilsTempUser;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
@@ -37,12 +38,16 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 //import org.json.simple.simple.*;
 import org.json.JSONException;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -205,16 +210,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 }else{
 
-                    User user = new User();
-                    user.setEmail(jsonObjRec.get(Constants.TAG_Email).toString());
-                    user.setName(jsonObjRec.get(Constants.TAG_Name).toString());
-                    user.setGender(jsonObjRec.get(Constants.TAG_Gender).toString());
-                    user.setBirthday(jsonObjRec.get(Constants.TAG_Birthday).toString());
-                    user.setCategories(jsonObjRec.get(Constants.TAG_CATEGORIES).toString());
-                    user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
-                    user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
-                    user.setQnJsonArray((org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_QUESTIONS));
-                    PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
+                    setUserOld(jsonObjRec);
+
+
                     Intent intent = new Intent(LoginActivity.this, BaseActivity.class);
                     startActivity(intent);
                     finish();
@@ -226,6 +224,110 @@ public class LoginActivity extends AppCompatActivity {
             else
                 Log.e(TAG,"jsonObjRec == null");
         }
+    }
+
+    public void setUserOld(JSONObject jsonObjRec) {
+
+        User user = new User();
+        user.setEmail(jsonObjRec.get(Constants.TAG_Email).toString());
+        user.setName(jsonObjRec.get(Constants.TAG_Name).toString());
+        user.setGender(jsonObjRec.get(Constants.TAG_Gender).toString());
+        user.setBirthday(jsonObjRec.get(Constants.TAG_Birthday).toString());
+        user.setCategories(jsonObjRec.get(Constants.TAG_CATEGORIES).toString());
+        user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
+        PrefUtilsUser.setCurrentUser(user,this);
+        setUserOldQns(jsonObjRec);
+
+    }
+
+    public void setUserOldQns(JSONObject jsonObjRec){
+
+        User user = PrefUtilsUser.getCurrentUser(this);
+
+        user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
+        user.setQnJsonArray((org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_QUESTIONS));
+        ArrayList<UserSeeQn> qnArrayList = new ArrayList<>();
+
+        JSONArray jArray =  user.getQnJsonArray();
+        JSONArray arr = null;
+        if(jArray != null){
+            String jsonString = jArray.toJSONString();
+            JSONParser parser = new JSONParser();
+
+            try {
+                arr = (JSONArray) parser.parse(jsonString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }else{
+            Log.d(TAG,"jArray = null");
+        }
+
+        if(arr!=null){
+            for (int i = 0; i < arr.size(); i++) {
+                Log.d(TAG, "BaseActivity - onCreate - qnJsonArray loop - i = " + i);
+                UserSeeQn qn = new UserSeeQn();
+                //Log.d(TAG, qnJsonArray.toJSONString());
+                JSONObject jsonObject = (JSONObject) arr.get(i);
+                qn.setqId(jsonObject.get(Constants.TAG_SEEQN_QN_ID).toString());
+                qn.setuId(jsonObject.get(Constants.TAG_SEEQN_QNR_ID).toString());
+                qn.setQnText(jsonObject.get(Constants.TAG_SEEQN_QN_TEXT).toString());
+                qn.setHintText(jsonObject.get(Constants.TAG_SEEQN_Hint).toString());
+                qn.setTimer(jsonObject.get(Constants.TAG_SEEQN_Timer).toString());
+                qn.setQnType(jsonObject.get(Constants.TAG_SEEQN_QN_TYPE).toString());
+                if (qn.getQnType().equalsIgnoreCase(Constants.VALUE_SEEQN_Objective)) {
+
+                    qn.setOption1(jsonObject.get(Constants.TAG_SEEQN_OPTION1).toString());
+                    qn.setOption2(jsonObject.get(Constants.TAG_SEEQN_OPTION2).toString());
+                    qn.setOption3(jsonObject.get(Constants.TAG_SEEQN_OPTION3).toString());
+                    qn.setOption4(jsonObject.get(Constants.TAG_SEEQN_OPTION4).toString());
+
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option1_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus1(true);
+                    else
+                        qn.setStatus1(false);
+
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option2_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus2(true);
+                    else
+                        qn.setStatus2(false);
+
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option3_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus3(true);
+                    else
+                        qn.setStatus3(false);
+
+                    if (jsonObject.get(Constants.TAG_SEEQN_Option4_Status).toString().equalsIgnoreCase("1"))
+                        qn.setStatus4(true);
+                    else
+                        qn.setStatus4(false);
+
+
+                } else {
+
+                    qn.setAnsText(jsonObject.get(Constants.TAG_SEEQN_Ans_Text).toString());
+                    String keywords = jsonObject.get(Constants.TAG_SEEQN_Keywords).toString();
+                    String[] keyw = keywords.split(",");
+                    ArrayList<String> keywordsArray = new ArrayList<>();
+                    for(int j=0;j<keyw.length;j++)
+                        keywordsArray.add(keyw[j]);
+                    qn.setKeywords(keywordsArray);
+
+                }
+                qnArrayList.add(qn);
+
+            }
+        }else{
+            Log.d(TAG,"arr = null");
+        }
+
+
+
+
+
+        user.setQuestionArray(qnArrayList);
+        PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
+
     }
 
     View.OnClickListener regButtonClickListener = new View.OnClickListener() {
@@ -372,16 +474,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 }else{
 
-                    User user = new User();
-                    user.setEmail(jsonObjRec.get(Constants.TAG_Email).toString());
-                    user.setName(jsonObjRec.get(Constants.TAG_Name).toString());
-                    user.setGender(jsonObjRec.get(Constants.TAG_Gender).toString());
-                    user.setBirthday(jsonObjRec.get(Constants.TAG_Birthday).toString());
-                    user.setCategories(jsonObjRec.get(Constants.TAG_CATEGORIES).toString());
-                    user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
-                    user.setQuestions(jsonObjRec.get(Constants.TAG_QUESTIONS).toString());
-                    user.setQnJsonArray((org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_QUESTIONS));
-                    PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
+                    setUserOld(jsonObjRec);
                     PrefUtilsTempUser.clearCurrentTempUser(LoginActivity.this);
                     Intent intent = new Intent(LoginActivity.this, BaseActivity.class);
                     startActivity(intent);

@@ -235,6 +235,8 @@ public class PostQnDetailActivity extends AppCompatActivity {
 
             sendPostQnToServer();
 
+            finish();
+
 
         }
     };

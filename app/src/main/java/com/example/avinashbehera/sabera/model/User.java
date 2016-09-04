@@ -6,6 +6,7 @@ import org.json.simple.JSONArray;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by avinashbehera on 20/08/16.
@@ -18,28 +19,6 @@ public class User implements Serializable{
     private String pwd;
 
     private String gcmRegToken;
-
-    public String getGcmRegToken() {
-        return gcmRegToken;
-    }
-
-    public void setGcmRegToken(String gcmRegToken) {
-        this.gcmRegToken = gcmRegToken;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-
-    //private ArrayList<LinearLayout> qnLLArray;
-
-//    public ArrayList<LinearLayout> getQnLLArray() {
-//        return qnLLArray;
-//    }
-//
-//    public void setQnLLArray(ArrayList<LinearLayout> qnLLArray) {
-//        this.qnLLArray = qnLLArray;
-//    }
 
     private String name;
 
@@ -61,6 +40,64 @@ public class User implements Serializable{
 
     private String categories;
 
+    private ArrayList<UserSeeQn> questionArray;
+
+    private JSONArray qnJsonArray;
+
+    private String Questions;
+
+    private ArrayList<MatchedUser> matchedUserList;
+
+    private HashMap<String,MatchedUser> matchedUserHashMap;
+
+    private HashMap<String,ArrayList<Message>> matchedUserMessageMap;
+
+    private ArrayList<MsgFrgmChatHead> chatHeadsArrayList;
+
+    public ArrayList<MsgFrgmChatHead> getChatHeadsArrayList() {
+        return chatHeadsArrayList;
+    }
+
+    public void setChatHeadsArrayList(ArrayList<MsgFrgmChatHead> chatHeadsArrayList) {
+        this.chatHeadsArrayList = chatHeadsArrayList;
+    }
+
+    public HashMap<String, ArrayList<Message>> getMatchedUserMessageMap() {
+        return matchedUserMessageMap;
+    }
+
+    public void setMatchedUserMessageMap(HashMap<String, ArrayList<Message>> matchedUserMessageMap) {
+        this.matchedUserMessageMap = matchedUserMessageMap;
+    }
+
+    public HashMap<String, MatchedUser> getMatchedUserHashMap() {
+        return matchedUserHashMap;
+    }
+
+    public void setMatchedUserHashMap(HashMap<String, MatchedUser> matchedUserHashMap) {
+        this.matchedUserHashMap = matchedUserHashMap;
+    }
+
+    public ArrayList<MatchedUser> getMatchedUserList() {
+        return matchedUserList;
+    }
+
+    public void setMatchedUserList(ArrayList<MatchedUser> matchedUserList) {
+        this.matchedUserList = matchedUserList;
+    }
+
+    public String getGcmRegToken() {
+        return gcmRegToken;
+    }
+
+    public void setGcmRegToken(String gcmRegToken) {
+        this.gcmRegToken = gcmRegToken;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
     public String getCategories() {
         return categories;
     }
@@ -69,9 +106,7 @@ public class User implements Serializable{
         this.categories = categories;
     }
 
-    private ArrayList<UserSeeQn> questionArray;
 
-    private JSONArray qnJsonArray;
 
     public JSONArray getQnJsonArray() {
         return qnJsonArray;
@@ -89,7 +124,7 @@ public class User implements Serializable{
         this.questionArray = questionArray;
     }
 
-    private String Questions;
+
 
     public ArrayList<String> getCategoryList() {
         return categoryList;
