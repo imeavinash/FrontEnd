@@ -1,15 +1,17 @@
 package com.example.avinashbehera.sabera.model;
 
+import java.io.Serializable;
+
 /**
  * Created by avinashbehera on 04/09/16.
  */
-public class MsgFrgmChatHead {
+public class MsgFrgmChatHead implements Serializable {
 
     private String userId;
     private String name;
     private String lastMessage;
     private String timeStamp;
-    private String unreadMsgCount;
+    private int unreadMsgCount;
 
     public MsgFrgmChatHead() {
     }
@@ -38,11 +40,11 @@ public class MsgFrgmChatHead {
         this.timeStamp = timeStamp;
     }
 
-    public String getUnreadMsgCount() {
+    public int getUnreadMsgCount() {
         return unreadMsgCount;
     }
 
-    public void setUnreadMsgCount(String unreadMsgCount) {
+    public void setUnreadMsgCount(int unreadMsgCount) {
         this.unreadMsgCount = unreadMsgCount;
     }
 

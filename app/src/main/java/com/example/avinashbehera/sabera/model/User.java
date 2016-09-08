@@ -5,6 +5,7 @@ import android.widget.LinearLayout;
 import org.json.simple.JSONArray;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -48,11 +49,27 @@ public class User implements Serializable{
 
     private ArrayList<MatchedUser> matchedUserList;
 
-    private HashMap<String,MatchedUser> matchedUserHashMap;
-
-    private HashMap<String,ArrayList<Message>> matchedUserMessageMap;
-
     private ArrayList<MsgFrgmChatHead> chatHeadsArrayList;
+
+    private URL imageUrl;
+
+    private String encodedImage;
+
+    public String getEncodedImage() {
+        return encodedImage;
+    }
+
+    public void setEncodedImage(String encodedImage) {
+        this.encodedImage = encodedImage;
+    }
+
+    public URL getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(URL imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public ArrayList<MsgFrgmChatHead> getChatHeadsArrayList() {
         return chatHeadsArrayList;
@@ -62,21 +79,9 @@ public class User implements Serializable{
         this.chatHeadsArrayList = chatHeadsArrayList;
     }
 
-    public HashMap<String, ArrayList<Message>> getMatchedUserMessageMap() {
-        return matchedUserMessageMap;
-    }
 
-    public void setMatchedUserMessageMap(HashMap<String, ArrayList<Message>> matchedUserMessageMap) {
-        this.matchedUserMessageMap = matchedUserMessageMap;
-    }
 
-    public HashMap<String, MatchedUser> getMatchedUserHashMap() {
-        return matchedUserHashMap;
-    }
 
-    public void setMatchedUserHashMap(HashMap<String, MatchedUser> matchedUserHashMap) {
-        this.matchedUserHashMap = matchedUserHashMap;
-    }
 
     public ArrayList<MatchedUser> getMatchedUserList() {
         return matchedUserList;

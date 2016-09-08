@@ -61,9 +61,9 @@ public class LogoutActivity extends AppCompatActivity {
         genderTextView = (TextView)findViewById(R.id.genderTextView);
         userSaberaIdTextView = (TextView)findViewById(R.id.userIdTextView);
         birthdayTextView = (TextView)findViewById(R.id.birthdayTextView);
-        //mImageView=(ImageView)findViewById(R.id.profilePicture);
+        mImageView=(ImageView)findViewById(R.id.profilePicture);
 
-        profilePictureView = (ProfilePictureView)findViewById(R.id.profilePicture);
+        //profilePictureView = (ProfilePictureView)findViewById(R.id.profilePicture);
         categoriesTextView=(TextView) findViewById(R.id.categoryTextView);
 
         if(user != null){
@@ -86,12 +86,28 @@ public class LogoutActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                com.example.avinashbehera.sabera.util.PrefUtilsUser.clearCurrentUser(LogoutActivity.this);
+                //com.example.avinashbehera.sabera.util.PrefUtilsUser.clearCurrentUser(LogoutActivity.this);
 
 
                 // We can logout from facebook by calling following method
                 if(FacebookSdk.isInitialized())
                     LoginManager.getInstance().logOut();
+
+                User user = PrefUtilsUser.getCurrentUser(LogoutActivity.this);
+
+                JSONObject jsonObjectSend = new JSONObject();
+                jsonObjectSend.put(Constants.TAG_UserSaberaId,user.getSaberaId());
+                jsonObjectSend.put(Constants.TAG_FCM_Token,user.getGcmRegToken());
+
+                if (jsonObjectSend != null && jsonObjectSend.size() > 0) {
+                    Log.d(TAG, "jsonObjectSend = " + jsonObjectSend.toString());
+                    if (Constants.backendTest) {
+                        new sendFCMTOkenLogoutToServer().execute(jsonObjectSend);
+                    }
+
+                }
+
+                PrefUtilsUser.clearCurrentUser(LogoutActivity.this);
 
 
                 Intent i= new Intent(LogoutActivity.this,LoginActivity.class);
@@ -99,6 +115,36 @@ public class LogoutActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    public class sendFCMTOkenLogoutToServer extends AsyncTask<JSONObject, Void, JSONObject> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected JSONObject doInBackground(JSONObject... params) {
+
+            JSONObject jsonObjRec = HttpClient.SendHttpPostUsingUrlConnection(Constants.sendGcmTokenLogoutToServerURL, params[0]);
+            if (jsonObjRec != null)
+                return jsonObjRec;
+            else
+                return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObjRec) {
+            super.onPostExecute(jsonObjRec);
+            if (jsonObjRec != null && jsonObjRec.size() > 0) {
+
+                Log.d(TAG, "sendFCMTOkenLogoutToServer = " + jsonObjRec + toString());
+                String response = jsonObjRec.get(Constants.TAG_PostQn_Status).toString();
+
+
+            } else
+                Log.e(TAG, "jsonObjRec == null");
+        }
     }
 
 

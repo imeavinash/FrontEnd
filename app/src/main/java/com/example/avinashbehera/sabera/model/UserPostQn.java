@@ -1,11 +1,12 @@
 package com.example.avinashbehera.sabera.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by avinashbehera on 26/08/16.
  */
-public class UserPostQn {
+public class UserPostQn implements Serializable {
 
     private String qnTxt;
 
@@ -19,6 +20,8 @@ public class UserPostQn {
 
     private ArrayList<Integer> correctOptns;
 
+    private ArrayList<String> proposed_answer;
+
     private String timer;
 
     private String hintTxt;
@@ -28,6 +31,14 @@ public class UserPostQn {
     private ArrayList<String> categories;
 
     public UserPostQn() {
+    }
+
+    public ArrayList<String> getProposed_answer() {
+        return proposed_answer;
+    }
+
+    public void setProposed_answer(ArrayList<String> proposed_answer) {
+        this.proposed_answer = proposed_answer;
     }
 
     // Constructor for Subjective Qn

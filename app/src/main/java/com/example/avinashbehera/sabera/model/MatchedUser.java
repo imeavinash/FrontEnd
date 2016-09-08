@@ -1,21 +1,49 @@
 package com.example.avinashbehera.sabera.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by avinashbehera on 04/09/16.
  */
-public class MatchedUser {
+public class MatchedUser implements Serializable{
 
     private String userId;
     private String email;
     private String name;
     private String dob;
     private String gender;
+    private String categories;
+    private String encodedImage;
     private ArrayList<MatchedUserQn> qnsAnswered;
     private ArrayList<MatchedUserQn> qnsAsked;
+    private ArrayList<Message> messagesList;
 
     public MatchedUser() {
+    }
+
+    public String getEncodedImage() {
+        return encodedImage;
+    }
+
+    public void setEncodedImage(String encodedImage) {
+        this.encodedImage = encodedImage;
+    }
+
+    public String getCategories() {
+        return categories;
+    }
+
+    public void setCategories(String categories) {
+        this.categories = categories;
+    }
+
+    public ArrayList<Message> getMessagesList() {
+        return messagesList;
+    }
+
+    public void setMessagesList(ArrayList<Message> messagesList) {
+        this.messagesList = messagesList;
     }
 
     public String getDob() {

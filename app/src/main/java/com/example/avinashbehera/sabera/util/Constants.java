@@ -18,6 +18,7 @@ public class Constants {
     public static final String TAG_User_Exists_Status = "status";
     public static final String TAG_PASSWORD = "password";
     public static final String TAG_LOGIN_MODE = "login_mode";
+    public static final String TAG_Image_String = "image_string";
 
     public static final int REQUEST_CODE_CATEGORY = 1;
 
@@ -33,6 +34,16 @@ public class Constants {
     public static final String EXTRA_Email = "fb_email";
     public static final String EXTRA_Gender = "sex";
     public static final String EXTRA_Birthday = "birthday";
+    public static final String EXTRA_Chat_UserId = "chat_user_id";
+    public static final String EXTRA_Chat_Name = "chat_name";
+
+    public static final String Intent_Push_Notification = "push_notification";
+    public static final String EXTRA_Push_Not_Type = "push_not_type";
+    public static final String VALUE_Push_Not_Type_Match = "match";
+    public static final String VALUE_Push_Not_Type_Chat = "chat";
+    public static final String EXTRA_Push_Not_Data = "push_not_data";
+    public static final String EXTRA_Push_Not_Chat_Userid = "userid";
+
 
     public static final int toastLengthShort = Toast.LENGTH_SHORT;
     public static final int toastLengthLong = Toast.LENGTH_LONG;
@@ -48,12 +59,15 @@ public class Constants {
     public static final String sendPostQnToServerURL = "http://192.168.0.189:9000/postQuestion";
     public static final String sendAnswerToServerURL = "http://192.168.0.189:9000/postAnswer";
     public static final String sendGcmTokenLoginToServerURL = "http://192.168.0.189:9000/storeDeviceToken";
-    public static final String sendGcmTokenLogoutToServerURL = "http://192.168.0.189:9000/postQuestion";
+    public static final String sendGcmTokenLogoutToServerURL = "http://192.168.0.189:9000/logout";
+    public static final String sendChatToServerURL = "http://192.168.0.189:9000/storeChat";
 
 
     public static final int POST_QN_TYPE_NONE = 0;
     public static final int POST_QN_TYPE_OBJECTIVE = 1;
     public static final int POST_QN_TYPE_SUBJECTIVE = 2;
+
+    public static final String TAG_FCM_Token = "device_token";
 
     public static final String TAG_PostQn_UserSaberaID = "userid";
     public static final String TAG_PostQn_QnType = "qtype";
@@ -108,6 +122,37 @@ public class Constants {
 
     public static final String TAG_SendRegToken_token = "device_token";
     public static final String TAG_SendRegToken_userId = "uid";
+
+    public static final String TAG_M_User = "matched_users";
+    public static final String TAG_M_User_QA = "QandA";
+    public static final String TAG_M_User_QA_qTxt = "qstring";
+    public static final String TAG_M_User_QA_qnrId = "quesid";
+    public static final String TAG_M_User_QA_ansId = "ansid";
+    public static final String TAG_M_User_QA_pAns = "proposed_keywords";
+    public static final String TAG_M_User_QA_aAns = "attempted_answer";
+    public static final String TAG_M_User_QA_keywords = "answer";
+    public static final String TAG_M_User_QA_answers = "answer";
+    public static final String TAG_M_User_Msgs = "chats";
+    public static final String TAG_M_User_Msgs_Id = "chat_id";
+    public static final String TAG_M_User_Msgs_Txt = "message";
+    public static final String TAG_M_User_Msgs_time = "time_stamp";
+    public static final String TAG_M_User_Msgs_senderId = "uid_sender";
+    public static final String TAG_M_User_Msgs_receiverId = "uid_receiver";
+
+    public static final String TAG_Send_Chat_Msg_Txt = "message";
+    public static final String TAG_Send_Chat_SenderId = "uid_sender";
+    public static final String TAG_Send_Chat_ReceiverId = "uid_receiver";
+    public static final String TAG_Send_Chat_Timestamp = "time_stamp";
+    public static final String TAG_Send_Chat_Response = "status";
+    public static final String TAG_Send_Chat_Msg_Id = "chat_id";
+
+
+    public static final String TAG_Push_Not_Match_Qnr = "questioner";
+    public static final String TAG_Push_Not_Match_Answr = "answerer";
+    public static final String TAG_Push_Not_Match_timestamp = "timestamp";
+    public static final String TAG_Push_Not_Chat_UserId = "chat_id";
+    public static final String TAG_Push_Not_Chat_MsgTxt = "message";
+    public static final String TAG_Push_Not_Chat_timestamp = "time_stamp";
 
 
 

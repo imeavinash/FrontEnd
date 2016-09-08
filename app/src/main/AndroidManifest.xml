@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -68,32 +67,38 @@
             android:name=".Activity.PostQnDetailActivity"
             android:label="@string/title_activity_post_qn_obj_detail"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activity.Registration1Activity"></activity>
+        <activity android:name=".Activity.Registration1Activity" />
 
-        <!--
-            GCM Receiver
-        -->
+        <!-- GCM Receiver -->
 
 
-        <!--
-            GCM Receiver Service
-        -->
-        <service android:name=".gcm.GCMPushReceiverService" android:exported="false">
+        <!-- GCM Receiver Service -->
+        <service
+            android:name=".gcm.GCMPushReceiverService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <!--
-            GCM Registration Intent Service
-        -->
-        <service android:name=".gcm.GCMTokenRefreshListenerService" android:exported="false">
+        <!-- GCM Registration Intent Service -->
+        <service
+            android:name=".gcm.GCMTokenRefreshListenerService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
+        <activity
+            android:name=".Activity.ChatActivity"
+            android:label="@string/title_activity_chat"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity
+            android:name=".Activity.MatchedUserProfileActivity"
+            android:label="@string/title_activity_matched_user_profile"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
-
 
 </manifest>

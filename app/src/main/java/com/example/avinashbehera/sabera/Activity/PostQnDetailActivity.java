@@ -27,6 +27,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 //import org.json.simple.JSONException;
 import org.json.JSONException;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Text;
 
@@ -59,6 +60,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
     private LinearLayout postQnDetailSubjLL;
     private ArrayList<String> optionsArray;
     private ArrayList<Integer> correctOptionsArray;
+    private ArrayList<String> proposed_answer;
     private ArrayList<String> keywordsArray;
     private ArrayList<String> categoriesArray;
     private static final String TAG = PostQnDetailActivity.class.getSimpleName();
@@ -103,6 +105,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
 
         optionsArray = new ArrayList<>();
         correctOptionsArray = new ArrayList<>();
+        proposed_answer = new ArrayList<>();
         keywordsArray = new ArrayList<>();
         categoriesArray = new ArrayList<>();
 
@@ -195,11 +198,24 @@ public class PostQnDetailActivity extends AppCompatActivity {
 
                 }
 
-                if (opt1checkBox.isChecked()) correctOptionsArray.add(1);
-                if (opt2checkBox.isChecked()) correctOptionsArray.add(2);
-                if (opt3checkBox.isChecked()) correctOptionsArray.add(3);
-                if (opt4checkBox.isChecked()) correctOptionsArray.add(4);
+                if (opt1checkBox.isChecked()) {
+                    correctOptionsArray.add(1);
+                    proposed_answer.add(option1);
+                }
+                if (opt2checkBox.isChecked()) {
+                    correctOptionsArray.add(2);
+                    proposed_answer.add(option2);
+                }
+                if (opt3checkBox.isChecked()) {
+                    correctOptionsArray.add(3);
+                    proposed_answer.add(option3);
+                }
+                if (opt4checkBox.isChecked()) {
+                    correctOptionsArray.add(4);
+                    proposed_answer.add(option4);
+                }
                 postQn.setCorrectOptns(correctOptionsArray);
+                postQn.setProposed_answer(proposed_answer);
 
 
             } else {
@@ -277,6 +293,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
         jsonObjSend.put(Constants.TAG_PostQn_Hint, postQn.getHintTxt());
         jsonObjSend.put(Constants.TAG_PostQn_TimeStamp, postQn.getTimeStamp());
         jsonObjSend.put(Constants.TAG_PostQn_Categories, postQn.getCategories());
+        JSONArray pAnsJArray = new JSONArray();
         if (postQn.getQnType().equalsIgnoreCase(Constants.VALUE_PostQn_Objective)) {
 
             jsonObjSend.put(Constants.TAG_PostQn_Option1, postQn.getOptions().get(0));
@@ -284,6 +301,13 @@ public class PostQnDetailActivity extends AppCompatActivity {
             jsonObjSend.put(Constants.TAG_PostQn_Option3, postQn.getOptions().get(2));
             jsonObjSend.put(Constants.TAG_PostQn_Option4, postQn.getOptions().get(3));
             jsonObjSend.put(Constants.TAG_PostQn_Option1_Status, true);
+
+            ArrayList<String> cOptions = postQn.getProposed_answer();
+            for(int i=0;i<cOptions.size();i++){
+                JSONObject jObj = new JSONObject();
+                jObj.put(Constants.TAG_M_User_QA_answers,cOptions.get(i));
+                pAnsJArray.add(jObj);
+            }
 
             if (postQn.getCorrectOptns().contains(1))
                 jsonObjSend.put(Constants.TAG_PostQn_Option1_Status, "TRUE");
@@ -314,9 +338,16 @@ public class PostQnDetailActivity extends AppCompatActivity {
                 keywords = keywords + keywordsArray.get(0);
                 for (int i = 1; i < keywordsArray.size(); i++)
                     keywords = keywords + "," + keywordsArray.get(i);
+                for(int i=0;i<keywordsArray.size();i++){
+                    JSONObject jObj = new JSONObject();
+                    jObj.put(Constants.TAG_M_User_QA_answers,keywordsArray.get(i));
+                    pAnsJArray.add(jObj);
+                }
             }
             jsonObjSend.put(Constants.TAG_PostQn_Keywords, keywords);
         }
+
+        jsonObjSend.put(Constants.TAG_M_User_QA_pAns,pAnsJArray);
 
         if (jsonObjSend != null && jsonObjSend.size() > 0) {
             Log.d(TAG, "PostQnJsonSend = " + jsonObjSend.toString());

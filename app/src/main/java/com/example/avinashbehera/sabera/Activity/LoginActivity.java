@@ -17,6 +17,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.avinashbehera.sabera.R;
+import com.example.avinashbehera.sabera.model.MatchedUser;
+import com.example.avinashbehera.sabera.model.MatchedUserQn;
+import com.example.avinashbehera.sabera.model.Message;
+import com.example.avinashbehera.sabera.model.MsgFrgmChatHead;
 import com.example.avinashbehera.sabera.model.User;
 import com.example.avinashbehera.sabera.model.UserSeeQn;
 import com.example.avinashbehera.sabera.util.Constants;
@@ -45,10 +49,14 @@ import org.json.simple.parser.ParseException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Set;
 
 
@@ -235,8 +243,151 @@ public class LoginActivity extends AppCompatActivity {
         user.setBirthday(jsonObjRec.get(Constants.TAG_Birthday).toString());
         user.setCategories(jsonObjRec.get(Constants.TAG_CATEGORIES).toString());
         user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
+        user.setEncodedImage(jsonObjRec.get(Constants.TAG_Image_String).toString());
+
         PrefUtilsUser.setCurrentUser(user,this);
         setUserOldQns(jsonObjRec);
+        setUserOldMatchedUserDetails(jsonObjRec);
+
+    }
+
+    public void setUserOldMatchedUserDetails(JSONObject jsonObjRec) {
+
+        User user = PrefUtilsUser.getCurrentUser(this);
+        ArrayList<MatchedUser> matchedUserList = new ArrayList<>();
+        //HashMap<String,MatchedUser> matchedUserHashMap = new HashMap<>();
+        //HashMap<String,ArrayList<Message>> matchedUserMessageMap = new HashMap<>();
+        ArrayList<MsgFrgmChatHead> chatHeadsArrayList = new ArrayList<>();
+        JSONArray matchedUserJArray = (org.json.simple.JSONArray)jsonObjRec.get(Constants.TAG_M_User);
+        if(matchedUserJArray!=null && matchedUserJArray.size()>0){
+
+            for(int i=0;i<matchedUserJArray.size();i++){
+
+                MatchedUser mUser = new MatchedUser();
+                ArrayList<MatchedUserQn> qnsAnswered = new ArrayList<>();
+                ArrayList<MatchedUserQn> qnsAsked = new ArrayList<>();
+
+                JSONObject mUserJObject = (JSONObject)matchedUserJArray.get(i);
+                mUser.setUserId(mUserJObject.get(Constants.TAG_UserSaberaId).toString());
+                mUser.setEmail(mUserJObject.get(Constants.TAG_Email).toString());
+                mUser.setName(mUserJObject.get(Constants.TAG_Name).toString());
+                mUser.setDob(mUserJObject.get(Constants.TAG_Birthday).toString());
+                mUser.setGender(mUserJObject.get(Constants.TAG_Gender).toString());
+                mUser.setCategories(mUserJObject.get(Constants.TAG_CATEGORIES).toString());
+
+
+                JSONArray qandAArray = (org.json.simple.JSONArray)mUserJObject.get(Constants.TAG_M_User_QA);
+                if(qandAArray!=null && qandAArray.size()>0){
+
+                    for(int j=0;j<qandAArray.size();j++){
+
+                        MatchedUserQn mQn = new MatchedUserQn();
+                        JSONObject mQnJsonObj = (JSONObject)qandAArray.get(j);
+                        mQn.setQnTxt(mQnJsonObj.get(Constants.TAG_M_User_QA_qTxt).toString());
+                        mQn.setQnrId(mQnJsonObj.get(Constants.TAG_M_User_QA_qnrId).toString());
+                        mQn.setAnswererId(mQnJsonObj.get(Constants.TAG_M_User_QA_ansId).toString());
+                        ArrayList<String> proposed_answer = new ArrayList<>();
+                        ArrayList<String> attempted_answer = new ArrayList<>();
+                        JSONArray pAnsJArray = (org.json.simple.JSONArray)mQnJsonObj.get(Constants.TAG_M_User_QA_pAns);
+                        JSONArray aAnsJArray = (org.json.simple.JSONArray)mQnJsonObj.get(Constants.TAG_M_User_QA_aAns);
+                        if(pAnsJArray!=null && pAnsJArray.size()>0){
+
+                            for(int k=0;k<pAnsJArray.size();k++){
+                                JSONObject pAnsJObj = (JSONObject)pAnsJArray.get(k);
+                                proposed_answer.add(pAnsJObj.get(Constants.TAG_M_User_QA_keywords).toString());
+                            }
+
+                        }else{
+                            Log.e(TAG,"pAnsJArray = null or size = 0");
+                        }
+
+                        if(aAnsJArray!=null && aAnsJArray.size()>0){
+
+                            for(int k=0;k<aAnsJArray.size();k++){
+                                JSONObject aAnsJObj = (JSONObject)pAnsJArray.get(k);
+                                attempted_answer.add(aAnsJObj.get(Constants.TAG_M_User_QA_answers).toString());
+                            }
+
+                        }else{
+                            Log.e(TAG,"aAnsJArray = null or size = 0");
+                        }
+
+                        mQn.setProposed_answer(proposed_answer);
+                        mQn.setAttempted_answer(attempted_answer);
+
+                        if(mQn.getQnrId().equals(user.getSaberaId())){
+                            qnsAnswered.add(mQn);
+                        }else{
+                            qnsAsked.add(mQn);
+                        }
+
+
+
+                    }
+
+                }else{
+                    Log.e(TAG,"qandAArray = null or size = 0");
+                }
+
+                mUser.setQnsAnswered(qnsAnswered);
+                mUser.setQnsAsked(qnsAsked);
+
+                ArrayList<Message> messagesList = new ArrayList<>();
+
+                JSONArray chatsArray = (org.json.simple.JSONArray)mUserJObject.get(Constants.TAG_M_User_Msgs);
+                if(chatsArray!=null && chatsArray.size()>0){
+
+                    for(int j=0;j<chatsArray.size();j++){
+
+                        Message message = new Message();
+                        JSONObject msgJsonObj = (JSONObject)chatsArray.get(j);
+                        message.setMessageId(msgJsonObj.get(Constants.TAG_M_User_Msgs_Id).toString());
+                        message.setMsgTxt(msgJsonObj.get(Constants.TAG_M_User_Msgs_Txt).toString());
+                        message.setTimeStamp(msgJsonObj.get(Constants.TAG_M_User_Msgs_time).toString());
+                        message.setSenderId(msgJsonObj.get(Constants.TAG_M_User_Msgs_senderId).toString());
+                        message.setRecvrId(msgJsonObj.get(Constants.TAG_M_User_Msgs_receiverId).toString());
+                        messagesList.add(message);
+                    }
+
+                }else{
+                    Log.e(TAG,"chatsArray = null or size = 0");
+                }
+
+                mUser.setMessagesList(messagesList);
+
+                MsgFrgmChatHead chatHead = new MsgFrgmChatHead();
+                chatHead.setUserId(mUser.getUserId());
+                chatHead.setName(mUser.getName());
+                int messageCount = mUser.getMessagesList().size();
+                if(messageCount!=0){
+                    Message lastMessage = mUser.getMessagesList().get(messageCount-1);
+                    chatHead.setLastMessage(lastMessage.getMsgTxt());
+                    chatHead.setTimeStamp(lastMessage.getTimeStamp());
+                }else{
+                    chatHead.setLastMessage("");
+                    chatHead.setTimeStamp("");
+                }
+
+                chatHead.setUnreadMsgCount(0);
+
+
+                matchedUserList.add(mUser);
+                //matchedUserHashMap.put(mUser.getUserId(),mUser);
+                //matchedUserMessageMap.put(mUser.getUserId(),mUser.getMessagesList());
+                chatHeadsArrayList.add(chatHead);
+
+            }//end of matchedUserJArray loop
+
+        }else{
+            Log.e(TAG,"matchedUserJArray = null or size = 0");
+        }
+
+        user.setMatchedUserList(matchedUserList);
+        //user.setMatchedUserHashMap(matchedUserHashMap);
+        //user.setMatchedUserMessageMap(matchedUserMessageMap);
+        user.setChatHeadsArrayList(chatHeadsArrayList);
+        PrefUtilsUser.setCurrentUser(user,this);
+
 
     }
 
@@ -265,7 +416,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(arr!=null){
             for (int i = 0; i < arr.size(); i++) {
-                Log.d(TAG, "BaseActivity - onCreate - qnJsonArray loop - i = " + i);
+                Log.d(TAG, "qnJsonArray loop - i = " + i);
                 UserSeeQn qn = new UserSeeQn();
                 //Log.d(TAG, qnJsonArray.toJSONString());
                 JSONObject jsonObject = (JSONObject) arr.get(i);
@@ -351,15 +502,15 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             User tempUser = new User();
-            Log.e(TAG,"regButtonClickListener - a - new User");
+            //Log.e(TAG,"regButtonClickListener - a - new User");
             tempUser.setEmail(email);
-            Log.e(TAG,"regButtonClickListener - b - set Email");
+            //Log.e(TAG,"regButtonClickListener - b - set Email");
             tempUser.setPwd(pwd);
-            Log.e(TAG,"regButtonClickListener - c - set pwd");
+            //Log.e(TAG,"regButtonClickListener - c - set pwd");
             PrefUtilsTempUser.setCurrentTempUser(tempUser,LoginActivity.this);
-            Log.e(TAG,"regButtonClickListener - d - set currentTempUser");
+            //Log.e(TAG,"regButtonClickListener - d - set currentTempUser");
             Intent intent = new Intent(LoginActivity.this,Registration1Activity.class);
-            Log.e(TAG,"regButtonClickListener - e - new Intent");
+            //Log.e(TAG,"regButtonClickListener - e - new Intent");
             startActivity(intent);
 
         }
@@ -401,16 +552,37 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e("response: ", response + "");
                         try {
 
-                            //String facebookID = object.get("id").toString();
+                            String facebookID = object.get("id").toString();
+                            String profilePicUrl;
+                            Log.d(TAG,"facebookId :"+facebookID);
+                            String stringURL = null;
+                            try {
+                                stringURL = "http://graph.facebook.com/" + URLEncoder.encode(facebookID, "UTF-8") + "?fields=" + URLEncoder.encode("picture", "UTF-8");
+                            } catch (UnsupportedEncodingException e1) {
+                                e1.printStackTrace();
+                            }
+                            Log.d(TAG,"stringURL :"+stringURL);
                             //Log.d("LoginActivity","in onCompleted graphRequest userId = " + facebookID);
+                            org.json.JSONObject data = response.getJSONObject();
+                            if(data.has("picture")){
+
+                                profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
+
+                            }else{
+                                Log.d(TAG,"data doesn't have picture");
+                            }
                             String email = object.get("email").toString();
 
                             String name = object.get("name").toString();
                             String gender = object.get("gender").toString();
+                            URL url = new URL("http://graph.facebook.com/"+facebookID+"/picture?type=large");
+                            //profilePicUrl = object.getJSONObject("picture").getJSONObject("data").getString("url");
+                            //Log.d(TAG,"profilePicUrl :"+profilePicUrl);
                             User tempUser = new User();
                             tempUser.setEmail(email);
                             tempUser.setGender(gender);
                             tempUser.setName(name);
+                            tempUser.setImageUrl(url);
                             PrefUtilsTempUser.setCurrentTempUser(tempUser,LoginActivity.this);
 
                             JSONObject jsonObjectSend = new JSONObject();

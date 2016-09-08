@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -47,6 +48,10 @@ public class RegistrationDetailActivity extends AppCompatActivity {
     private Button cancelButton;
     private Button pickCtgryButton;
     private TextView categoryTxtView;
+    private ImageView profilePicImgView;
+    private Button btnUploadPicture;
+
+
     private ArrayList<String> mCategoriesList;
     private User user;
 
@@ -109,6 +114,10 @@ public class RegistrationDetailActivity extends AppCompatActivity {
         cancelButton = (Button)findViewById(R.id.cancelRegButton);
         pickCtgryButton = (Button)findViewById(R.id.btnRegPickCtgry);
         categoryTxtView = (TextView) findViewById(R.id.regCtgryTxtView);
+        profilePicImgView = (ImageView) findViewById(R.id.profilePicture);
+        btnUploadPicture = (Button) findViewById(R.id.btnUploadPicture);
+
+        
 
 
         user = PrefUtilsUser.getCurrentUser(this);

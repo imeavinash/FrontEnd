@@ -1,67 +1,56 @@
 package com.example.avinashbehera.sabera.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by avinashbehera on 04/09/16.
  */
-public class MatchedUserQn {
-
-    private String qId;
+public class MatchedUserQn implements Serializable {
 
     private String qnTxt;
 
-    private String qnType;
+    private String qnrId;
 
-    private String proposed_answer;
+    private String answererId;
 
-    private String given_answer;
+    private ArrayList<String> proposed_answer;
 
-    private ArrayList<String> options;
-
-    private ArrayList<String> correctOptions;
+    private ArrayList<String> attempted_answer;
 
     public MatchedUserQn() {
     }
 
-    public ArrayList<String> getCorrectOptions() {
-        return correctOptions;
+    public String getAnswererId() {
+        return answererId;
     }
 
-    public void setCorrectOptions(ArrayList<String> correctOptions) {
-        this.correctOptions = correctOptions;
+    public void setAnswererId(String answererId) {
+        this.answererId = answererId;
     }
 
-    public String getGiven_answer() {
-        return given_answer;
+    public String getQnrId() {
+        return qnrId;
     }
 
-    public void setGiven_answer(String given_answer) {
-        this.given_answer = given_answer;
+    public void setQnrId(String qnrId) {
+        this.qnrId = qnrId;
     }
 
-    public ArrayList<String> getOptions() {
-        return options;
+    public ArrayList<String> getAttempted_answer() {
+        return attempted_answer;
     }
 
-    public void setOptions(ArrayList<String> options) {
-        this.options = options;
+    public void setAttempted_answer(ArrayList<String> attempted_answer) {
+        this.attempted_answer = attempted_answer;
     }
 
-    public String getProposed_answer() {
+    public ArrayList<String> getProposed_answer() {
         return proposed_answer;
     }
 
-    public void setProposed_answer(String proposed_answer) {
+    public void setProposed_answer(ArrayList<String> proposed_answer) {
         this.proposed_answer = proposed_answer;
-    }
-
-    public String getqId() {
-        return qId;
-    }
-
-    public void setqId(String qId) {
-        this.qId = qId;
     }
 
     public String getQnTxt() {
@@ -72,11 +61,4 @@ public class MatchedUserQn {
         this.qnTxt = qnTxt;
     }
 
-    public String getQnType() {
-        return qnType;
-    }
-
-    public void setQnType(String qnType) {
-        this.qnType = qnType;
-    }
 }

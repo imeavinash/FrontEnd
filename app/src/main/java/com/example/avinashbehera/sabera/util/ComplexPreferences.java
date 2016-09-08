@@ -27,56 +27,56 @@ public class ComplexPreferences {
     public static final String TAG = ComplexPreferences.class.getSimpleName();
 
     private ComplexPreferences(Context context, String namePreferences, int mode) {
-        Log.e(TAG,"regButtonClickListener - j1");
+        //Log.e(TAG,"regButtonClickListener - j1");
         this.context = context;
-        Log.e(TAG,"regButtonClickListener - j2");
+        //Log.e(TAG,"regButtonClickListener - j2");
         if (namePreferences == null || namePreferences.equals("")) {
-            Log.e(TAG,"regButtonClickListener - j3");
+            //Log.e(TAG,"regButtonClickListener - j3");
             namePreferences = "complex_preferences";
         }
-        Log.e(TAG,"regButtonClickListener - j4");
+        //Log.e(TAG,"regButtonClickListener - j4");
         preferences = context.getSharedPreferences(namePreferences, mode);
-        Log.e(TAG,"regButtonClickListener - j5");
+        //Log.e(TAG,"regButtonClickListener - j5");
         editor = preferences.edit();
-        Log.e(TAG,"regButtonClickListener - j6");
+        //Log.e(TAG,"regButtonClickListener - j6");
     }
 
     public static ComplexPreferences getComplexPreferences(Context context, String namePreferences, int mode) {
 
-        Log.e(TAG,"regButtonClickListener - f1");
+        //Log.e(TAG,"regButtonClickListener - f1");
 
      // if (complexPreferences == null) {
         complexPreferences = new ComplexPreferences(context,
                 namePreferences, mode);
       //}
 
-        Log.e(TAG,"regButtonClickListener - f2");
+        //Log.e(TAG,"regButtonClickListener - f2");
 
         return complexPreferences;
     }
 
     public void putObject(String key, Object object) {
-        Log.e(TAG,"regButtonClickListener - g1");
+        //Log.e(TAG,"regButtonClickListener - g1");
         if (object == null) {
-            Log.e(TAG,"regButtonClickListener - g2");
+            //Log.e(TAG,"regButtonClickListener - g2");
             throw new IllegalArgumentException("object is null");
         }
 
         if (key.equals("") || key == null) {
-            Log.e(TAG,"regButtonClickListener - g3");
+            //Log.e(TAG,"regButtonClickListener - g3");
             throw new IllegalArgumentException("key is empty or null");
         }
 
-        Log.e(TAG,"regButtonClickListener - g4");
+        //Log.e(TAG,"regButtonClickListener - g4");
         JSONObject obj = new JSONObject();
 
         editor.putString(key, GSON.toJson(object));
-        Log.e(TAG,"regButtonClickListener - g5");
+        //Log.e(TAG,"regButtonClickListener - g5");
     }
 
     public void commit() {
 
-        Log.e(TAG,"regButtonClickListener - h1");
+        //Log.e(TAG,"regButtonClickListener - h1");
         editor.commit();
     }
 

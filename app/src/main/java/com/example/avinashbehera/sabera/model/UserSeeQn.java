@@ -1,11 +1,12 @@
 package com.example.avinashbehera.sabera.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by avinashbehera on 02/09/16.
  */
-public class UserSeeQn {
+public class UserSeeQn implements Serializable {
 
     private String qnText;
 

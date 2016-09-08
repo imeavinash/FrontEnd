@@ -13,10 +13,33 @@
     tools:showIn="@layout/activity_registrationdetail_activty">
 
     <LinearLayout
-        android:id="@+id/nameRegLinearLayout"
+        android:id="@+id/picLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/profilePicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            />
+
+        <Button
+            android:id="@+id/btnUploadPicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Upload Picture"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nameRegLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/picLinearLayout"
         android:layout_alignParentLeft="true">
 
         <TextView

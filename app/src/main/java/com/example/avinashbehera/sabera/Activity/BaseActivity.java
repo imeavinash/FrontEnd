@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -39,6 +41,10 @@ import com.example.avinashbehera.sabera.fragments.PostQnFragment;
 import com.example.avinashbehera.sabera.fragments.SeeQnFragment;
 import com.example.avinashbehera.sabera.gcm.GCMRegistrationIntentService;
 import com.example.avinashbehera.sabera.gcm.GCMTokenRefreshListenerService;
+import com.example.avinashbehera.sabera.model.MatchedUser;
+import com.example.avinashbehera.sabera.model.MatchedUserQn;
+import com.example.avinashbehera.sabera.model.Message;
+import com.example.avinashbehera.sabera.model.MsgFrgmChatHead;
 import com.example.avinashbehera.sabera.model.User;
 import com.example.avinashbehera.sabera.model.UserSeeQn;
 import com.example.avinashbehera.sabera.network.HttpClient;
@@ -78,6 +84,7 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private ArrayList<UserSeeQn> qnArrayList;
     public static final String TAG = BaseActivity.class.getSimpleName();
+    private BroadcastReceiver mPushNotBroadcastReceiver;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -87,6 +94,7 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG,"onCreate");
         setContentView(R.layout.activity_base);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -103,22 +111,27 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
         tabLayout.setupWithViewPager(mViewPager);
 
         User user = PrefUtilsUser.getCurrentUser(BaseActivity.this);
-        String regToken = GCMTokenRefreshListenerService.refreshedToken;
-        if(user.getGcmRegToken()==null || user.getGcmRegToken().equalsIgnoreCase("") || !regToken.equals(user.getGcmRegToken())){
+        //String regToken = GCMTokenRefreshListenerService.refreshedToken;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String key = "firebaseToken";
+        final String currentToken =  sharedPreferences.getString(key,"xxx");
+        Log.d(TAG,"currentToken = "+currentToken);
+        String userToken = user.getGcmRegToken();
+        if(userToken==null || userToken.equalsIgnoreCase("") || !userToken.equals(currentToken)){
             Log.d(TAG,"user gcmToken = null or = blank or not equal to current token");
+            userToken = currentToken;
+            user.setGcmRegToken(userToken);
+            PrefUtilsUser.setCurrentUser(user,this);
+            JSONObject jsonObjectSend = new JSONObject();
+
+            jsonObjectSend.put(Constants.TAG_SendRegToken_token,userToken);
+            jsonObjectSend.put(Constants.TAG_SendRegToken_userId,PrefUtilsUser.getCurrentUser(getApplication()).getSaberaId());
 
 
-                user.setGcmRegToken(GCMTokenRefreshListenerService.refreshedToken);
-                PrefUtilsUser.setCurrentUser(user,this);
-                JSONObject jsonObjectSend = new JSONObject();
-
-                jsonObjectSend.put(Constants.TAG_SendRegToken_token,GCMTokenRefreshListenerService.refreshedToken);
-                jsonObjectSend.put(Constants.TAG_SendRegToken_userId,PrefUtilsUser.getCurrentUser(getApplication()).getSaberaId());
-
-
-                new sendRegTokenToServer().execute(jsonObjectSend);
+            new sendRegTokenToServer().execute(jsonObjectSend);
 
         }
+
 
 
 
@@ -136,10 +149,16 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
                 if (intent.getAction().equals(GCMTokenRefreshListenerService.REGISTRATION_SUCCESS)) {
                     //Getting the registration token from the intent
                     String token = intent.getStringExtra("token");
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BaseActivity.this);
+                    SharedPreferences.Editor editor;
+                    editor = sharedPreferences.edit();
+                    editor.putString("firebaseToken",token);
+                    editor.apply();
                     Log.d(TAG,"gcm token ="+token);
 
                     User user = PrefUtilsUser.getCurrentUser(BaseActivity.this);
                     user.setGcmRegToken(token);
+                    PrefUtilsUser.setCurrentUser(user,BaseActivity.this);
                     JSONObject jsonObjectSend = new JSONObject();
 
                         jsonObjectSend.put(Constants.TAG_SendRegToken_token,token);
@@ -184,10 +203,331 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
             //startService(intent);
         }
 
+        mPushNotBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
 
-        PrefUtilsUser.setCurrentUser(user, this);
+                Log.d(TAG,"mPushNotBroadcastReceiver - onReceive");
+
+                if(intent.getStringExtra(Constants.EXTRA_Push_Not_Type).equals(Constants.VALUE_Push_Not_Type_Match)){
+                    Log.d(TAG,"mPushNotBroadcastReceiver - onReceive - type - match");
+                    handleNewMatch(intent.getStringExtra(Constants.EXTRA_Push_Not_Data));
+                }else{
+                    Log.d(TAG,"mPushNotBroadcastReceiver - onReceive - type - chat");
+                    String senderId = intent.getStringExtra(Constants.EXTRA_Push_Not_Chat_Userid);
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BaseActivity.this);
+                    String key = "currentChatUserId";
+                    String currentUserId =  sharedPreferences.getString(key,"xxx");
+                    Log.d(TAG,"currentUserId = "+currentUserId);
+                    Log.d(TAG,"senderId = "+senderId);
+
+                    //String currentChatUserId = ChatActivity.userId;
+                    if(currentUserId!=null){
+                        if(!senderId.equals(currentUserId)){
+                            handleNewChat(intent.getStringExtra(Constants.EXTRA_Push_Not_Data));
+                        }
+                    }
+
+                }
+            }
+        };
+
+        Bundle extras = getIntent().getExtras();
+        if(extras!=null){
+            String pushType = extras.getString(Constants.EXTRA_Push_Not_Type,"");
+            if(pushType!=null && !pushType.equalsIgnoreCase("")){
+
+                if(pushType.equals(Constants.VALUE_Push_Not_Type_Match)){
+                    Log.d(TAG,"pushType = match");
+                    handleNewMatch(extras.getString(Constants.EXTRA_Push_Not_Data));
+                }else{
+                    Log.d(TAG,"pushType = chat");
+                    String senderId = extras.getString(Constants.EXTRA_Push_Not_Chat_Userid);
+                    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BaseActivity.this);
+                    key = "currentChatUserId";
+                    String currentUserId =  sharedPreferences.getString(key,"xxx");
+                    Log.d(TAG,"currentUserId = "+currentUserId);
+                    Log.d(TAG,"senderId = "+senderId);
+                    if(!senderId.equals(currentUserId)){
+                        handleNewChat(extras.getString(Constants.EXTRA_Push_Not_Data));
+                    }
+                }
+
+            }else{
+                Log.d(TAG,"pushType = null or empty");
+            }
+        }
 
 
+
+
+
+
+
+
+    }
+
+    public void handleNewMatch(String jsonMatchString){
+
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject jsonObjMatch = (JSONObject)parser.parse(jsonMatchString);
+            Log.e(TAG,"jsonObjMatch = "+jsonObjMatch);
+            if(jsonObjMatch!=null && jsonObjMatch.size()>0){
+
+                User user = PrefUtilsUser.getCurrentUser(this);
+                //MatchedUser mUser = new MatchedUser();
+                ArrayList<MatchedUser> mUserList = user.getMatchedUserList();
+                if(mUserList==null || mUserList.size()==0){
+                    mUserList = new ArrayList<>();
+                }
+
+                JSONObject mUserJObj;
+                //JSONObject mUserJObj = (JSONObject)jsonObjMatch.get(Constants.TAG_Push_Not_Match_Muser);
+                JSONObject mQnJObj = (JSONObject)jsonObjMatch.get(Constants.TAG_M_User_QA);
+                String qnrId = mQnJObj.get(Constants.TAG_M_User_QA_qnrId).toString();
+                if(qnrId.equals(user.getSaberaId())){
+                    mUserJObj = (JSONObject)jsonObjMatch.get(Constants.TAG_Push_Not_Match_Answr);
+                }else{
+                    mUserJObj = (JSONObject)jsonObjMatch.get(Constants.TAG_Push_Not_Match_Qnr);
+                }
+                String mUserId = mUserJObj.get(Constants.TAG_UserSaberaId).toString();
+                int mUserIndex = -1;
+                for(int i=0;i<mUserList.size();i++){
+                    if(mUserList.get(i).getUserId().equals(mUserId)){
+                        mUserIndex=i;
+                        break;
+                    }
+                }
+                //Old Matched User New Qn
+                if(mUserIndex!=-1){
+
+                    MatchedUser mUser = mUserList.get(mUserIndex);
+                    ArrayList<MatchedUserQn> qnsAnswered = mUser.getQnsAnswered();
+                    ArrayList<MatchedUserQn> qnsAsked = mUser.getQnsAsked();
+
+                    mQnJObj = (JSONObject)jsonObjMatch.get(Constants.TAG_M_User_QA);
+                    if(mQnJObj!=null && mQnJObj.size()>0){
+
+                        MatchedUserQn mQn = new MatchedUserQn();
+                        mQn.setQnTxt(mQnJObj.get(Constants.TAG_M_User_QA_qTxt).toString());
+                        mQn.setQnrId(mQnJObj.get(Constants.TAG_M_User_QA_qnrId).toString());
+                        mQn.setAnswererId(mQnJObj.get(Constants.TAG_M_User_QA_ansId).toString());
+                        ArrayList<String> proposed_answer = new ArrayList<>();
+                        ArrayList<String> attempted_answer = new ArrayList<>();
+                        JSONArray pAnsJArray = (org.json.simple.JSONArray)mQnJObj.get(Constants.TAG_M_User_QA_pAns);
+                        JSONArray aAnsJArray = (org.json.simple.JSONArray)mQnJObj.get(Constants.TAG_M_User_QA_aAns);
+                        if(pAnsJArray!=null && pAnsJArray.size()>0){
+
+                            for(int k=0;k<pAnsJArray.size();k++){
+                                JSONObject pAnsJObj = (JSONObject)pAnsJArray.get(k);
+                                proposed_answer.add(pAnsJObj.get(Constants.TAG_M_User_QA_keywords).toString());
+                            }
+
+                        }else{
+                            Log.e(TAG,"pAnsJArray = null or size = 0");
+                        }
+
+                        if(aAnsJArray!=null && aAnsJArray.size()>0){
+
+                            for(int k=0;k<aAnsJArray.size();k++){
+                                JSONObject aAnsJObj = (JSONObject)pAnsJArray.get(k);
+                                attempted_answer.add(aAnsJObj.get(Constants.TAG_M_User_QA_answers).toString());
+                            }
+
+                        }else{
+                            Log.e(TAG,"aAnsJArray = null or size = 0");
+                        }
+
+                        mQn.setProposed_answer(proposed_answer);
+                        mQn.setAttempted_answer(attempted_answer);
+
+                        if(mQn.getQnrId().equals(user.getSaberaId())){
+                            qnsAnswered.add(mQn);
+                            mUser.setQnsAnswered(qnsAnswered);
+                        }else{
+                            qnsAsked.add(mQn);
+                            mUser.setQnsAsked(qnsAsked);
+                        }
+
+                        Toast.makeText(BaseActivity.this, "New match with "+mUser.getName(), Toast.LENGTH_SHORT).show();
+
+                        mUserList.set(mUserIndex,mUser);
+                        user.setMatchedUserList(mUserList);
+                        PrefUtilsUser.setCurrentUser(user,this);
+
+
+
+                    }else{
+                        Log.e(TAG,"mQnObj = null or size = 0");
+                    }
+
+                }
+                //New Matched User
+                else{
+
+                    MatchedUser mUser = new MatchedUser();
+                    ArrayList<MatchedUserQn> qnsAnswered = new ArrayList<>();
+                    ArrayList<MatchedUserQn> qnsAsked = new ArrayList<>();
+
+                    //JSONObject mUserJObject = (JSONObject)jsonObjMatch.get(Constants.TAG_Push_Not_Match_Muser);
+                    mUser.setUserId(mUserJObj.get(Constants.TAG_UserSaberaId).toString());
+                    mUser.setEmail(mUserJObj.get(Constants.TAG_Email).toString());
+                    mUser.setName(mUserJObj.get(Constants.TAG_Name).toString());
+                    mUser.setDob(mUserJObj.get(Constants.TAG_Birthday).toString());
+                    mUser.setGender(mUserJObj.get(Constants.TAG_Gender).toString());
+                    mUser.setCategories(mUserJObj.get(Constants.TAG_CATEGORIES).toString());
+
+                    MatchedUserQn mQn = new MatchedUserQn();
+                    mQnJObj = (JSONObject)jsonObjMatch.get(Constants.TAG_M_User_QA);
+                    if(mQnJObj!=null && mQnJObj.size()>0){
+
+                        mQn.setQnTxt(mQnJObj.get(Constants.TAG_M_User_QA_qTxt).toString());
+                        mQn.setQnrId(mQnJObj.get(Constants.TAG_M_User_QA_qnrId).toString());
+                        mQn.setAnswererId(mQnJObj.get(Constants.TAG_M_User_QA_ansId).toString());
+                        ArrayList<String> proposed_answer = new ArrayList<>();
+                        ArrayList<String> attempted_answer = new ArrayList<>();
+                        JSONArray pAnsJArray = (org.json.simple.JSONArray)mQnJObj.get(Constants.TAG_M_User_QA_pAns);
+                        JSONArray aAnsJArray = (org.json.simple.JSONArray)mQnJObj.get(Constants.TAG_M_User_QA_aAns);
+                        if(pAnsJArray!=null && pAnsJArray.size()>0){
+
+                            for(int k=0;k<pAnsJArray.size();k++){
+                                JSONObject pAnsJObj = (JSONObject)pAnsJArray.get(k);
+                                proposed_answer.add(pAnsJObj.get(Constants.TAG_M_User_QA_keywords).toString());
+                            }
+
+                        }else{
+                            Log.e(TAG,"pAnsJArray = null or size = 0");
+                        }
+
+                        if(aAnsJArray!=null && aAnsJArray.size()>0){
+
+                            for(int k=0;k<aAnsJArray.size();k++){
+                                JSONObject aAnsJObj = (JSONObject)pAnsJArray.get(k);
+                                attempted_answer.add(aAnsJObj.get(Constants.TAG_M_User_QA_answers).toString());
+                            }
+
+                        }else{
+                            Log.e(TAG,"aAnsJArray = null or size = 0");
+                        }
+
+                        mQn.setProposed_answer(proposed_answer);
+                        mQn.setAttempted_answer(attempted_answer);
+
+                        if(mQn.getQnrId().equals(user.getSaberaId())){
+                            qnsAnswered.add(mQn);
+                        }else{
+                            qnsAsked.add(mQn);
+                        }
+
+                    }else{
+
+                        Log.e(TAG,"mQnObj = null or size = 0");
+
+                    }
+
+
+
+
+
+
+                    mUser.setQnsAnswered(qnsAnswered);
+                    mUser.setQnsAsked(qnsAsked);
+
+                    ArrayList<Message> messagesList = new ArrayList<>();
+                    mUser.setMessagesList(messagesList);
+
+                    mUserList.add(mUser);
+                    user.setMatchedUserList(mUserList);
+
+                    MsgFrgmChatHead chatHead = new MsgFrgmChatHead();
+                    chatHead.setUserId(mUser.getUserId());
+                    chatHead.setName(mUser.getName());
+                    chatHead.setLastMessage("");
+                    chatHead.setTimeStamp("");
+                    chatHead.setUnreadMsgCount(0);
+
+                    ArrayList<MsgFrgmChatHead> chatHeadsList = user.getChatHeadsArrayList();
+                    chatHeadsList.add(chatHead);
+                    user.setChatHeadsArrayList(chatHeadsList);
+
+                    PrefUtilsUser.setCurrentUser(user,this);
+
+                }
+
+
+            }else{
+                Log.e(TAG,"handlNewMatch - jsonObjMatch = null or size = 0");
+            }
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void handleNewChat(String jsonNewChatString){
+
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject jsonObjChat = (JSONObject)parser.parse(jsonNewChatString);
+            Log.e(TAG,"jsonObjChat = "+jsonObjChat);
+            if(jsonObjChat!=null && jsonObjChat.size()>0){
+
+                Message message = new Message();
+
+                message.setMessageId(jsonObjChat.get(Constants.TAG_M_User_Msgs_Id).toString());
+                message.setMsgTxt(jsonObjChat.get(Constants.TAG_M_User_Msgs_Txt).toString());
+                message.setTimeStamp(jsonObjChat.get(Constants.TAG_M_User_Msgs_time).toString());
+                message.setSenderId(jsonObjChat.get(Constants.TAG_M_User_Msgs_senderId).toString());
+                message.setRecvrId(jsonObjChat.get(Constants.TAG_M_User_Msgs_receiverId).toString());
+
+                User user = PrefUtilsUser.getCurrentUser(this);
+
+                ArrayList<MatchedUser> mUserList = user.getMatchedUserList();
+                for(int i=0;i<mUserList.size();i++){
+                    MatchedUser mUser = mUserList.get(i);
+                    if(mUser.getUserId().equals(message.getSenderId())){
+                        ArrayList<Message> messagesList = mUser.getMessagesList();
+                        messagesList.add(message);
+                        mUser.setMessagesList(messagesList);
+                        mUserList.set(i,mUser);
+                        user.setMatchedUserList(mUserList);
+                        ArrayList<MsgFrgmChatHead> chatHeadsList = user.getChatHeadsArrayList();
+                        for(int j=0;j<chatHeadsList.size();j++){
+                            MsgFrgmChatHead chatHead = chatHeadsList.get(j);
+                            if(chatHead.getUserId().equals(message.getSenderId())){
+                                chatHead.setTimeStamp(message.getTimeStamp());
+                                chatHead.setLastMessage(message.getMsgTxt());
+                                chatHeadsList.remove(j);
+                                chatHeadsList.add(chatHead);
+                                user.setChatHeadsArrayList(chatHeadsList);
+                                break;
+                            }
+                        }
+                        PrefUtilsUser.setCurrentUser(user,this);
+                        break;
+                    }
+                }
+
+
+
+                Fragment messageFragment = mBaseActivityPagerAdapter.getItem(2);
+                if(messageFragment.isVisible()){
+                    Log.d(TAG,"messageFragment - isVisible() is true");
+
+                }
+
+
+            }else{
+                Log.e(TAG,"jsonObjChat = null or size = 0");
+            }
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -224,31 +564,40 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG,"onPause");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mPushNotBroadcastReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG,"onResume");
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(GCMTokenRefreshListenerService.REGISTRATION_SUCCESS));
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(GCMRegistrationIntentService.REGISTRATION_ERROR));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mPushNotBroadcastReceiver,
+                new IntentFilter(Constants.Intent_Push_Notification));
     }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
+
+        Log.d(TAG,"onTabSelected");
 
     }
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
         mViewPager.setCurrentItem(tab.getPosition());
+        Log.d(TAG,"onTabUnselected");
 
     }
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
+        Log.d(TAG,"onTabReselected");
 
     }
 
@@ -278,6 +627,7 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
     @Override
     public void onStart() {
         super.onStart();
+        Log.d(TAG,"onStart");
 
 
     }
@@ -285,6 +635,7 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
     @Override
     public void onStop() {
         super.onStop();
+        Log.d(TAG,"onStop");
 
 
     }
