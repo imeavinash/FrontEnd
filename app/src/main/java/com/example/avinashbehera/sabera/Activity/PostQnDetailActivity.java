@@ -21,8 +21,7 @@ import com.example.avinashbehera.sabera.network.HttpClient;
 import com.example.avinashbehera.sabera.util.Constants;
 import com.example.avinashbehera.sabera.util.PrefUtilsPostQn;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 
 //import org.json.simple.JSONException;

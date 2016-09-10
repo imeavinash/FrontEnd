@@ -2,10 +2,15 @@ package com.example.avinashbehera.sabera.Activity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +36,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -65,6 +73,9 @@ public class RegistrationDetailActivity extends AppCompatActivity {
 
     Calendar myCalendar;
 
+    private Bitmap bitmap;
+    private String encodedImgString;
+
     private static final String TAG = RegistrationDetailActivity.class.getSimpleName();
 
     @Override
@@ -91,9 +102,25 @@ public class RegistrationDetailActivity extends AppCompatActivity {
 
 
             }
+
+            if(requestCode == Constants.REQUEST_SELECT_PICTURE){
+                Uri selectedImageUri = data.getData();
+                try {
+                    Bitmap bm = Utility.getBitmapFromUri(selectedImageUri,this);
+                    profilePicImgView.setImageBitmap(bm);
+                    encodedImgString = Utility.getImgEncString(bm);
+//                    User user = PrefUtilsUser.getCurrentUser(this);
+//                    user.setEncodedImage(encodedImage);
+//                    PrefUtilsUser.setCurrentUser(user,this);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +144,9 @@ public class RegistrationDetailActivity extends AppCompatActivity {
         profilePicImgView = (ImageView) findViewById(R.id.profilePicture);
         btnUploadPicture = (Button) findViewById(R.id.btnUploadPicture);
 
-        
+
+
+
 
 
         user = PrefUtilsUser.getCurrentUser(this);
@@ -125,6 +154,13 @@ public class RegistrationDetailActivity extends AppCompatActivity {
         name = user.getName();
         email = user.getEmail();
         gender = user.getGender();
+        encodedImgString=user.getEncodedImage();
+        if(encodedImgString!=null && !encodedImgString.equalsIgnoreCase("")){
+
+            Bitmap bm = Utility.getBmFromEncString(encodedImgString);
+            profilePicImgView.setImageBitmap(bm);
+
+        }
         if(gender!=null){
             if(gender.equalsIgnoreCase("male")){
                 maleRadioButton.setChecked(true);
@@ -185,6 +221,17 @@ public class RegistrationDetailActivity extends AppCompatActivity {
             }
         });
 
+        btnUploadPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,
+                        "Select Picture"), Constants.REQUEST_SELECT_PICTURE);
+            }
+        });
+
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,7 +240,7 @@ public class RegistrationDetailActivity extends AppCompatActivity {
 
                 if(noEditTextIsEmpty()){
 
-                    if(Constants.backendTest){
+
 
                         User user = PrefUtilsUser.getCurrentUser(RegistrationDetailActivity.this);
                         user.setEmail(emailTxtView.getText().toString());
@@ -201,6 +248,7 @@ public class RegistrationDetailActivity extends AppCompatActivity {
                         user.setGender(gender);
                         user.setBirthday(birthdayEditText.getText().toString());
                         user.setCategoryList(mCategoriesList);
+                        user.setEncodedImage(encodedImgString);
                         PrefUtilsUser.setCurrentUser(user,RegistrationDetailActivity.this);
 
 
@@ -211,15 +259,13 @@ public class RegistrationDetailActivity extends AppCompatActivity {
                         jsonObjectSend.put(Constants.TAG_Gender,user.getGender());
                         jsonObjectSend.put(Constants.TAG_Birthday,user.getBirthday());
                         jsonObjectSend.put(Constants.TAG_CATEGORIES,user.getCategories());
+                    jsonObjectSend.put(Constants.TAG_Image_String,user.getEncodedImage());
 
                         if(jsonObjectSend!=null && jsonObjectSend.size()>0){
                             new RegDetailDoneButtonSendDataToServer().execute(jsonObjectSend);
                         }
 
-                    }else{
 
-
-                    }
 
                 }else{
                     Utility.makeToast(RegistrationDetailActivity.this,"Please fill all fields",Constants.toastLengthLong);

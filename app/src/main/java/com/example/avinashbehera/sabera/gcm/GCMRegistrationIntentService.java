@@ -6,8 +6,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.avinashbehera.sabera.R;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
 
 /**
  * Created by avinashbehera on 02/09/16.
@@ -39,10 +37,10 @@ public class GCMRegistrationIntentService extends IntentService {
         String token = null;
         try {
             //Creating an instanceid
-            InstanceID instanceID = InstanceID.getInstance(getApplicationContext());
+           // InstanceID instanceID = InstanceID.getInstance(getApplicationContext());
 
             //Getting the token from the instance id
-            token = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+           // token = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
 
             //Displaying the token in the log so that we can copy it to send push notification
             //You can also extend the app by storing the token in to your server

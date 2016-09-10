@@ -50,11 +50,10 @@ import com.example.avinashbehera.sabera.model.UserSeeQn;
 import com.example.avinashbehera.sabera.network.HttpClient;
 import com.example.avinashbehera.sabera.util.Constants;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
+
 
 import org.json.JSONException;
 import org.json.simple.JSONArray;
@@ -89,7 +88,7 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -377,6 +376,10 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
                     mUser.setDob(mUserJObj.get(Constants.TAG_Birthday).toString());
                     mUser.setGender(mUserJObj.get(Constants.TAG_Gender).toString());
                     mUser.setCategories(mUserJObj.get(Constants.TAG_CATEGORIES).toString());
+                    if(mUserJObj.get(Constants.TAG_Image_String)!=null){
+                        mUser.setEncodedImage(mUserJObj.get(Constants.TAG_Image_String).toString());
+                    }
+
 
                     MatchedUserQn mQn = new MatchedUserQn();
                     mQnJObj = (JSONObject)jsonObjMatch.get(Constants.TAG_M_User_QA);

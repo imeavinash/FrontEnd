@@ -1,12 +1,16 @@
 package com.example.avinashbehera.sabera.Activity;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import android.content.pm.Signature;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -27,6 +31,7 @@ import com.example.avinashbehera.sabera.util.Constants;
 import com.example.avinashbehera.sabera.util.PrefUtilsTempUser;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
 import com.example.avinashbehera.sabera.network.HttpClient;
+import com.example.avinashbehera.sabera.util.Utility;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -47,9 +52,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
@@ -243,7 +250,10 @@ public class LoginActivity extends AppCompatActivity {
         user.setBirthday(jsonObjRec.get(Constants.TAG_Birthday).toString());
         user.setCategories(jsonObjRec.get(Constants.TAG_CATEGORIES).toString());
         user.setSaberaId(jsonObjRec.get(Constants.TAG_UserSaberaId).toString());
-        user.setEncodedImage(jsonObjRec.get(Constants.TAG_Image_String).toString());
+        if(jsonObjRec.get(Constants.TAG_Image_String)!=null){
+            user.setEncodedImage(jsonObjRec.get(Constants.TAG_Image_String).toString());
+        }
+
 
         PrefUtilsUser.setCurrentUser(user,this);
         setUserOldQns(jsonObjRec);
@@ -274,6 +284,10 @@ public class LoginActivity extends AppCompatActivity {
                 mUser.setDob(mUserJObject.get(Constants.TAG_Birthday).toString());
                 mUser.setGender(mUserJObject.get(Constants.TAG_Gender).toString());
                 mUser.setCategories(mUserJObject.get(Constants.TAG_CATEGORIES).toString());
+                if(mUserJObject.get(Constants.TAG_Image_String)!=null){
+                    mUser.setEncodedImage(mUserJObject.get(Constants.TAG_Image_String).toString());
+                }
+
 
 
                 JSONArray qandAArray = (org.json.simple.JSONArray)mUserJObject.get(Constants.TAG_M_User_QA);
@@ -389,6 +403,12 @@ public class LoginActivity extends AppCompatActivity {
         PrefUtilsUser.setCurrentUser(user,this);
 
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+        MultiDex.install(this);
     }
 
     public void setUserOldQns(JSONObject jsonObjRec){
@@ -576,6 +596,9 @@ public class LoginActivity extends AppCompatActivity {
                             String name = object.get("name").toString();
                             String gender = object.get("gender").toString();
                             URL url = new URL("http://graph.facebook.com/"+facebookID+"/picture?type=large");
+                            //Bitmap bm = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                            //String encodedImgString=Utility.getImgEncString(bm);
+
                             //profilePicUrl = object.getJSONObject("picture").getJSONObject("data").getString("url");
                             //Log.d(TAG,"profilePicUrl :"+profilePicUrl);
                             User tempUser = new User();
@@ -583,12 +606,14 @@ public class LoginActivity extends AppCompatActivity {
                             tempUser.setGender(gender);
                             tempUser.setName(name);
                             tempUser.setImageUrl(url);
+                            //tempUser.setEncodedImage(encodedImgString);
                             PrefUtilsTempUser.setCurrentTempUser(tempUser,LoginActivity.this);
+                            new getFBPicAndCompleteLogin().execute(facebookID);
 
-                            JSONObject jsonObjectSend = new JSONObject();
-                            jsonObjectSend.put(Constants.TAG_Email,email);
-                            jsonObjectSend.put(Constants.TAG_LOGIN_MODE,"fb");
-                            new fbLoginCheck().execute(jsonObjectSend);
+//                            JSONObject jsonObjectSend = new JSONObject();
+//                            jsonObjectSend.put(Constants.TAG_Email,email);
+//                            jsonObjectSend.put(Constants.TAG_LOGIN_MODE,"fb");
+//                            new fbLoginCheck().execute(jsonObjectSend);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -607,6 +632,44 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private class getFBPicAndCompleteLogin extends AsyncTask<String,Void,Bitmap>{
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            URL url = null;
+            Bitmap bm = null;
+            try {
+                 url = new URL("https://graph.facebook.com/" + params[0] + "/picture?type=large");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            try {
+                bm  = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return bm;
+
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bm) {
+            super.onPostExecute(bm);
+            Log.d(TAG,"getFBPicAndCompleteLogin - onPostExecute");
+            //mImageView.setImageBitmap(bitmap);
+            String encodedImgString=Utility.getImgEncString(bm);
+
+            User tempUser = PrefUtilsTempUser.getCurrentTempUser(LoginActivity.this);
+            tempUser.setEncodedImage(encodedImgString);
+            PrefUtilsTempUser.setCurrentTempUser(tempUser,LoginActivity.this);
+            JSONObject jsonObjectSend = new JSONObject();
+            jsonObjectSend.put(Constants.TAG_Email,tempUser.getEmail());
+            jsonObjectSend.put(Constants.TAG_LOGIN_MODE,"fb");
+            new fbLoginCheck().execute(jsonObjectSend);
+        }
+    }
+
     public class fbLoginCheck extends AsyncTask<JSONObject, Void, JSONObject> {
         @Override
         protected void onPreExecute() {
@@ -615,6 +678,8 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
+
+            Log.d(TAG,"fbLoginCheck - doInBackground");
 
             JSONObject jsonObjRec = HttpClient.SendHttpPostUsingUrlConnection(Constants.FbLoginCheckURL,params[0]);
             if(jsonObjRec != null)
@@ -638,6 +703,7 @@ public class LoginActivity extends AppCompatActivity {
                     user.setEmail(tempUser.getEmail());
                     user.setName(tempUser.getName());
                     user.setGender(tempUser.getGender());
+                    user.setEncodedImage(tempUser.getEncodedImage());
                     PrefUtilsUser.setCurrentUser(user,LoginActivity.this);
                     PrefUtilsTempUser.clearCurrentTempUser(LoginActivity.this);
                     Intent intent = new Intent(LoginActivity.this,RegistrationDetailActivity.class);

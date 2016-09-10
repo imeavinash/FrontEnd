@@ -132,8 +132,11 @@ public class HttpClient {
 			conn.setReadTimeout(15000 /* milliseconds */);
 			conn.setConnectTimeout(15000 /* milliseconds */);
 			conn.setRequestMethod("POST");
+			conn.setChunkedStreamingMode(1024);
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+			conn.addRequestProperty("Content-length", jsonObjSend.toJSONString().length()+"");
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
 
@@ -150,8 +153,11 @@ public class HttpClient {
 			os.close();
 
 			int responseCode=conn.getResponseCode();
+            Log.d(TAG,"responseCode = "+responseCode);
 
 			if (responseCode == HttpsURLConnection.HTTP_OK){
+
+				Log.d(TAG,"responseCode = HTTP OK");
 
 				InputStream instream = conn.getInputStream();
 

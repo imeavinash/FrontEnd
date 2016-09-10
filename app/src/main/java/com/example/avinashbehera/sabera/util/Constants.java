@@ -21,6 +21,7 @@ public class Constants {
     public static final String TAG_Image_String = "image_string";
 
     public static final int REQUEST_CODE_CATEGORY = 1;
+    public static final int REQUEST_SELECT_PICTURE = 5;
 
     public static final String REQUEST_CATEGORY_REGISTRATION="registration_category";
     public static final String REQUEST_CATEGORY_POSTQN="postqn_category";
@@ -58,9 +59,12 @@ public class Constants {
     public static final String FbLoginCheckURL = "http://192.168.0.189:9000/checkUserIfFbUserExists";
     public static final String sendPostQnToServerURL = "http://192.168.0.189:9000/postQuestion";
     public static final String sendAnswerToServerURL = "http://192.168.0.189:9000/postAnswer";
+    public static final String sendPassAnswerToServerURL = "http://192.168.0.189:9000/passQuestion";
     public static final String sendGcmTokenLoginToServerURL = "http://192.168.0.189:9000/storeDeviceToken";
     public static final String sendGcmTokenLogoutToServerURL = "http://192.168.0.189:9000/logout";
     public static final String sendChatToServerURL = "http://192.168.0.189:9000/storeChat";
+    public static final String sendPicToServerURL = "http://192.168.0.189:9000/updateProfilePicture";
+    public static final String loadQnsRequestURL = "http://192.168.0.189:9000/loadMoreQuestions";
 
 
     public static final int POST_QN_TYPE_NONE = 0;

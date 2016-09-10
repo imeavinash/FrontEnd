@@ -24,6 +24,7 @@ import com.example.avinashbehera.sabera.model.User;
 import com.example.avinashbehera.sabera.util.Constants;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
 import com.example.avinashbehera.sabera.util.SimpleDividerItemDecoration;
+import com.example.avinashbehera.sabera.util.Utility;
 import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.ArrayList;
@@ -122,6 +123,10 @@ public class MatchedUserProfileActivity extends AppCompatActivity {
 
                 qnAskedAdpater.notifyDataSetChanged();
                 qnAnsweredAdpater.notifyDataSetChanged();
+
+                String encodedImgString = mUser.getEncodedImage();
+                Bitmap bm = Utility.getBmFromEncString(encodedImgString);
+                mImageView.setImageBitmap(bm);
 
                 break;
             }

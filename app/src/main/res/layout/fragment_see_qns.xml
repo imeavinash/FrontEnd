@@ -5,6 +5,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <Button
+        android:id="@+id/btnLoadQns"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Load Qns"
+        android:visibility="gone"/>
+
     <TextView
         android:id="@+id/seeQnTxtView"
         android:layout_width="wrap_content"

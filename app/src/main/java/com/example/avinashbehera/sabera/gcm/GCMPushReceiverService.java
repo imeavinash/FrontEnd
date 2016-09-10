@@ -20,7 +20,7 @@ import com.example.avinashbehera.sabera.Activity.BaseActivity;
 import com.example.avinashbehera.sabera.R;
 import com.example.avinashbehera.sabera.util.Constants;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
-import com.google.android.gms.gcm.GcmListenerService;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
