@@ -37,6 +37,8 @@ public class User implements Serializable{
 
     private String saberaId;
 
+    private String passcode;
+
     private ArrayList<String> categoryList;
 
     private String categories;
@@ -54,6 +56,14 @@ public class User implements Serializable{
     private URL imageUrl;
 
     private String encodedImage;
+
+    public String getPasscode() {
+        return passcode;
+    }
+
+    public void setPasscode(String passcode) {
+        this.passcode = passcode;
+    }
 
     public String getEncodedImage() {
         return encodedImage;

@@ -125,8 +125,11 @@ public class MatchedUserProfileActivity extends AppCompatActivity {
                 qnAnsweredAdpater.notifyDataSetChanged();
 
                 String encodedImgString = mUser.getEncodedImage();
-                Bitmap bm = Utility.getBmFromEncString(encodedImgString);
-                mImageView.setImageBitmap(bm);
+                if(encodedImgString!=null && !encodedImgString.equalsIgnoreCase("")){
+                    Bitmap bm = Utility.getBmFromEncString(encodedImgString);
+                    mImageView.setImageBitmap(bm);
+                }
+
 
                 break;
             }

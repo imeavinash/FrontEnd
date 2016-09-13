@@ -28,8 +28,38 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/passcodeLL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Passcode : "/>
+
+        <EditText
+            android:id="@+id/passcodeEdtTxt"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:hint="Enter passcode sent in mail"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/resendPCbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resend Passcode"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/pwdLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,8 +75,10 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/retypePwdLL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="0dp"
@@ -78,7 +110,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Register"/>
+            android:text="Proceed"/>
 
     </LinearLayout>
 

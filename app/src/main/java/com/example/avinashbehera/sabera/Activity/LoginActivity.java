@@ -505,29 +505,29 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            String email = emailEdtTxt.getText().toString();
-            String pwd = pwdEdtTxt.getText().toString();
-
-            if(email == null || email.equalsIgnoreCase("")){
-                Toast.makeText(LoginActivity.this,"Please enter email",Toast.LENGTH_LONG).show();
-                return;
-            }
-            if(pwd == null || pwd.equalsIgnoreCase("")){
-                Toast.makeText(LoginActivity.this,"Please enter password",Toast.LENGTH_LONG).show();
-                return;
-            }
-            if(pwd.length()<6){
-                Toast.makeText(LoginActivity.this,"Password must be at least 6 characters",Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            User tempUser = new User();
-            //Log.e(TAG,"regButtonClickListener - a - new User");
-            tempUser.setEmail(email);
-            //Log.e(TAG,"regButtonClickListener - b - set Email");
-            tempUser.setPwd(pwd);
-            //Log.e(TAG,"regButtonClickListener - c - set pwd");
-            PrefUtilsTempUser.setCurrentTempUser(tempUser,LoginActivity.this);
+//            String email = emailEdtTxt.getText().toString();
+//            String pwd = pwdEdtTxt.getText().toString();
+//
+//            if(email == null || email.equalsIgnoreCase("")){
+//                Toast.makeText(LoginActivity.this,"Please enter email",Toast.LENGTH_LONG).show();
+//                return;
+//            }
+//            if(pwd == null || pwd.equalsIgnoreCase("")){
+//                Toast.makeText(LoginActivity.this,"Please enter password",Toast.LENGTH_LONG).show();
+//                return;
+//            }
+//            if(pwd.length()<6){
+//                Toast.makeText(LoginActivity.this,"Password must be at least 6 characters",Toast.LENGTH_LONG).show();
+//                return;
+//            }
+//
+//            User tempUser = new User();
+//            //Log.e(TAG,"regButtonClickListener - a - new User");
+//            tempUser.setEmail(email);
+//            //Log.e(TAG,"regButtonClickListener - b - set Email");
+//            tempUser.setPwd(pwd);
+//            //Log.e(TAG,"regButtonClickListener - c - set pwd");
+//            PrefUtilsTempUser.setCurrentTempUser(tempUser,LoginActivity.this);
             //Log.e(TAG,"regButtonClickListener - d - set currentTempUser");
             Intent intent = new Intent(LoginActivity.this,Registration1Activity.class);
             //Log.e(TAG,"regButtonClickListener - e - new Intent");

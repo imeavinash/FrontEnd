@@ -25,6 +25,8 @@ import com.example.avinashbehera.sabera.model.User;
 import com.example.avinashbehera.sabera.model.UserSeeQn;
 import com.example.avinashbehera.sabera.network.HttpClient;
 import com.example.avinashbehera.sabera.util.Constants;
+import com.example.avinashbehera.sabera.util.CustomViewPager;
+import com.example.avinashbehera.sabera.util.OnSwipeTouchListener;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
 
 import org.json.JSONException;
@@ -35,6 +37,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.w3c.dom.Text;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +66,8 @@ public class SeeQnFragment extends Fragment {
 
 
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,23 +86,6 @@ public class SeeQnFragment extends Fragment {
         if(currentTime==0){
             btnLoadQns.setVisibility(View.VISIBLE);
         }
-
-
-//        qnArrayList = user.getQuestionArray();
-//        if(qnArrayList != null && qnArrayList.size()>0){
-////            qnNos = qnArrayList.size();
-////            currentQnNo = qnArrayList.size()-1;
-//            addQnsToLayout();
-//        }else{
-//            btnLoadQns.setVisibility(View.VISIBLE);
-//            qnNos=0;
-//            currentQnNo=0;
-//        }
-
-
-
-
-
 
 
         return rootView;
@@ -252,7 +241,14 @@ public class SeeQnFragment extends Fragment {
         isVisible=isVisibleToUser;
     }
 
+    @Override
+    public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
+        super.dump(prefix, fd, writer, args);
+    }
+
     public  void addQnsToLayout(){
+
+        //((BaseActivity)getActivity()).getViewPager().setPagingEnabled(true);
 
         Log.d(TAG,"isVisible() = "+isVisible());
         Log.d(TAG,"isVisible variable = "+isVisible);
@@ -288,7 +284,10 @@ public class SeeQnFragment extends Fragment {
                 LayoutInflater inflater1 = LayoutInflater.from(getContext());
                 final LinearLayout qn1 = (LinearLayout)inflater1.inflate(R.layout.see_question_objective,null);
                 qnContainer.addView(qn1);
+
                 //qnLLArrayList.add(qn1);
+
+                //((BaseActivity)getActivity()).getViewPager().setPagingEnabled(false);
 
 
                 TextView qnTxt = (TextView)qn1.findViewById(R.id.seeQnObjQnText);
@@ -310,6 +309,15 @@ public class SeeQnFragment extends Fragment {
                 option2Txt.setText(qn.getOption2());
                 option3Txt.setText(qn.getOption3());
                 option4Txt.setText(qn.getOption4());
+
+
+                qn1.setOnTouchListener(new OnSwipeTouchListener(getContext()){
+                    public void onSwipeLeft() {
+                        Log.d(TAG,"onSwipeLeft");
+                        onPass();
+                        Toast.makeText(getContext(), "Swipe left", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
 
 
@@ -438,6 +446,8 @@ public class SeeQnFragment extends Fragment {
                 qnContainer.addView(qn1);
                 //qnLLArrayList.add(qn1);
 
+                //((BaseActivity)getActivity()).getViewPager().setPagingEnabled(false);
+
 
                 TextView qnTxt = (TextView)qn1.findViewById(R.id.seeQnSubjQnText);
 
@@ -451,6 +461,14 @@ public class SeeQnFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         onPass();
+                    }
+                });
+
+                qn1.setOnTouchListener(new OnSwipeTouchListener(getContext()){
+                    public void onSwipeLeft() {
+                        Log.d(TAG,"onSwipeLeft");
+                        onPass();
+                        Toast.makeText(getContext(), "Swipe left", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -564,7 +582,10 @@ public class SeeQnFragment extends Fragment {
 
     }
 
+
+
     public void onPass(){
+        Toast.makeText(getContext(),"Pass Qn",Toast.LENGTH_LONG).show();
         countDownTimer.cancel();
         currentTime=0;
         User user = PrefUtilsUser.getCurrentUser(getContext());

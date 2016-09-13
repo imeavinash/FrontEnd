@@ -22,6 +22,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.avinashbehera.sabera.R;
+import com.example.avinashbehera.sabera.model.MatchedUser;
+import com.example.avinashbehera.sabera.model.MsgFrgmChatHead;
 import com.example.avinashbehera.sabera.model.User;
 import com.example.avinashbehera.sabera.model.UserSeeQn;
 import com.example.avinashbehera.sabera.util.Constants;
@@ -299,6 +301,13 @@ public class RegistrationDetailActivity extends AppCompatActivity {
             super.onPostExecute(jsonObjRec);
             if(jsonObjRec != null && jsonObjRec.size() > 0){
 
+
+                User user = PrefUtilsUser.getCurrentUser(RegistrationDetailActivity.this);
+                ArrayList<MatchedUser> mUserList = new ArrayList<>();
+                user.setMatchedUserList(mUserList);
+                ArrayList<MsgFrgmChatHead> chatHeadsList = new ArrayList<>();
+                user.setChatHeadsArrayList(chatHeadsList);
+                PrefUtilsUser.setCurrentUser(user,RegistrationDetailActivity.this);
                 setUserNewQns(jsonObjRec);
                 Intent intent = new Intent(RegistrationDetailActivity.this,BaseActivity.class);
                 startActivity(intent);

@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -49,6 +50,7 @@ import com.example.avinashbehera.sabera.model.User;
 import com.example.avinashbehera.sabera.model.UserSeeQn;
 import com.example.avinashbehera.sabera.network.HttpClient;
 import com.example.avinashbehera.sabera.util.Constants;
+import com.example.avinashbehera.sabera.util.CustomViewPager;
 import com.example.avinashbehera.sabera.util.PrefUtilsUser;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -79,7 +81,7 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+    private CustomViewPager mViewPager;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private ArrayList<UserSeeQn> qnArrayList;
     public static final String TAG = BaseActivity.class.getSimpleName();
@@ -88,6 +90,8 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
+
+
 
 
     @Override
@@ -103,11 +107,19 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
         mBaseActivityPagerAdapter = new BaseActivityPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (CustomViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mBaseActivityPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        mViewPager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d(TAG,"mViewPager - onTouchListener");
+                return false;
+            }
+        });
 
         User user = PrefUtilsUser.getCurrentUser(BaseActivity.this);
         //String regToken = GCMTokenRefreshListenerService.refreshedToken;
@@ -258,12 +270,10 @@ public class BaseActivity extends AppCompatActivity implements TabLayout.OnTabSe
         }
 
 
+    }
 
-
-
-
-
-
+    public CustomViewPager getViewPager(){
+        return mViewPager;
     }
 
     public void handleNewMatch(String jsonMatchString){

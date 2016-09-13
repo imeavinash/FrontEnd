@@ -19,6 +19,7 @@ public class Constants {
     public static final String TAG_PASSWORD = "password";
     public static final String TAG_LOGIN_MODE = "login_mode";
     public static final String TAG_Image_String = "image_string";
+    public static final String TAG_Passcode = "passcode";
 
     public static final int REQUEST_CODE_CATEGORY = 1;
     public static final int REQUEST_SELECT_PICTURE = 5;
@@ -65,6 +66,8 @@ public class Constants {
     public static final String sendChatToServerURL = "http://192.168.0.189:9000/storeChat";
     public static final String sendPicToServerURL = "http://192.168.0.189:9000/updateProfilePicture";
     public static final String loadQnsRequestURL = "http://192.168.0.189:9000/loadMoreQuestions";
+    public static final String sendEmailRegURL = "http://192.168.0.189:9000/checkRegistration";
+    public static final String resendPasscodeURL = "http://192.168.0.189:9000/resendPassCode";
 
 
     public static final int POST_QN_TYPE_NONE = 0;

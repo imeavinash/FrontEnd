@@ -289,7 +289,7 @@ public class ChatActivity extends AppCompatActivity {
                     MatchedUser mUser;
                     if(mUserList!=null){
                         for(int i=0;i<mUserList.size();i++){
-                            if(mUserList.get(i).getUserId().equals(user)){
+                            if(mUserList.get(i).getUserId().equals(userId)){
                                 mUser = mUserList.get(i);
                                 ArrayList<Message> messagesArList = mUser.getMessagesList();
                                 messagesArList.add(message);
