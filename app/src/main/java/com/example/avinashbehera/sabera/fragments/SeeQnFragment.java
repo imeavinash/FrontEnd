@@ -1,9 +1,14 @@
 package com.example.avinashbehera.sabera.fragments;
 
 
+import android.content.Context;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
@@ -11,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -52,11 +59,16 @@ public class SeeQnFragment extends Fragment {
     private static ArrayList<UserSeeQn> qnArrayList;
     private static ArrayList<LinearLayout> qnLLArrayList;
     public FrameLayout qnContainer;
-    private TextView timerTxtView;
     private static MyCountDownTimer countDownTimer;
     private Button btnLoadQns;
     private boolean isVisible = false;
     private long currentTime=0;
+    private LinearLayout timerLL;
+    private TextView minTxtView;
+    private TextView secTxtView;
+    private TextView minSecSeparator;
+    private AlphaAnimation animation1;
+
 
     public static final String TAG = SeeQnFragment.class.getSimpleName();
 
@@ -78,14 +90,24 @@ public class SeeQnFragment extends Fragment {
         //seeQnTxtView.setText(user.getQuestions());
 
         qnContainer = (FrameLayout)rootView.findViewById(R.id.container);
-        timerTxtView = (TextView)rootView.findViewById(R.id.timertxtview);
         btnLoadQns = (Button)rootView.findViewById(R.id.btnLoadQns);
+        minTxtView = (TextView)rootView.findViewById(R.id.minTxtView);
+        secTxtView = (TextView)rootView.findViewById(R.id.secTxtView);
+        minSecSeparator = (TextView)rootView.findViewById(R.id.minSecSeparator);
+        timerLL = (LinearLayout)rootView.findViewById(R.id.timerLL);
 
         btnLoadQns.setOnClickListener(loadQnsOnClickListener);
 
         if(currentTime==0){
             btnLoadQns.setVisibility(View.VISIBLE);
         }
+
+        animation1 = new AlphaAnimation(1.0f, 0.0f);
+        animation1.setDuration(300);
+        animation1.setRepeatMode(Animation.REVERSE);
+        animation1.setRepeatCount(Animation.INFINITE);
+
+
 
 
         return rootView;
@@ -248,7 +270,14 @@ public class SeeQnFragment extends Fragment {
 
     public  void addQnsToLayout(){
 
-        //((BaseActivity)getActivity()).getViewPager().setPagingEnabled(true);
+        Log.d(TAG,"addQnsToLayout");
+
+        animation1.cancel();
+        timerLL.clearAnimation();
+        timerLL.setVisibility(View.GONE);
+
+        //timerLL.invalidate();
+
 
         Log.d(TAG,"isVisible() = "+isVisible());
         Log.d(TAG,"isVisible variable = "+isVisible);
@@ -284,6 +313,10 @@ public class SeeQnFragment extends Fragment {
                 LayoutInflater inflater1 = LayoutInflater.from(getContext());
                 final LinearLayout qn1 = (LinearLayout)inflater1.inflate(R.layout.see_question_objective,null);
                 qnContainer.addView(qn1);
+                Log.d(TAG,"addQnsToLayout - timerLL - setVisibility - visible");
+                timerLL.setVisibility(View.VISIBLE);
+
+
 
                 //qnLLArrayList.add(qn1);
 
@@ -446,7 +479,10 @@ public class SeeQnFragment extends Fragment {
                 qnContainer.addView(qn1);
                 //qnLLArrayList.add(qn1);
 
-                //((BaseActivity)getActivity()).getViewPager().setPagingEnabled(false);
+                Log.d(TAG,"addQnsToLayout - timerLL - setVisibility - visible");
+
+                timerLL.setVisibility(View.VISIBLE);
+
 
 
                 TextView qnTxt = (TextView)qn1.findViewById(R.id.seeQnSubjQnText);
@@ -666,11 +702,16 @@ public class SeeQnFragment extends Fragment {
             Log.d(TAG,"currenTime1 = "+currentTime1);
             currentTime=0;
 
-            timerTxtView.setText("0");
+            minTxtView.setText("00");
+            secTxtView.setText("00");
             if(currentTime1==1){
                 Log.d(TAG,"timer onFinish currenTime1 = 1");
+                animation1.cancel();
+                timerLL.clearAnimation();
+                timerLL.setVisibility(View.GONE);
                 onPass();
             }
+
         }
 
 
@@ -681,7 +722,18 @@ public class SeeQnFragment extends Fragment {
 
             currentTime1 = millisUntilFinished/1000;
             currentTime = currentTime1;
-            Log.d(TAG,"currentTime1 = "+currentTime1);
+            Log.d(TAG,"onTick - currentTime1 = "+currentTime1);
+
+            if(currentTime1<=10){
+                playNotificationSound();
+                Vibrator vibrator = (Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(500);
+            }
+
+            if(currentTime1==1){
+
+            }
+
 
             if(currentTime1==5){
                 User user1 = PrefUtilsUser.getCurrentUser(getContext());
@@ -696,9 +748,29 @@ public class SeeQnFragment extends Fragment {
 
             }
 
-            timerTxtView.setText(String.valueOf(millisUntilFinished/1000));
+            int currentTimeMin = (int)currentTime1/60;
+            int currentTimeSec = (int)currentTime1%60;
+            minTxtView.setText(String.valueOf(currentTimeMin));
+            secTxtView.setText(String.valueOf(currentTimeSec));
+
+            if(currentTime1==10){
+
+
+                timerLL.startAnimation(animation1);
+            }
+
         }
 
+    }
+
+    public void playNotificationSound() {
+        try {
+            Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getContext(), sound);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

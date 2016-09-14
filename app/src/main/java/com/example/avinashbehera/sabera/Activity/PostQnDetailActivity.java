@@ -40,6 +40,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
     private Button postQnPickCtgryButton;
     private TextView categoryTxtView;
     private TextView keywordsTxtView;
+    private TextView qnTxtView;
     private EditText ansEdtTxt;
     private EditText timerEdtTxt;
     private EditText minEditText;
@@ -113,6 +114,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
 
         categoryTxtView = (TextView) findViewById(R.id.postQnCtgryTxtView);
         keywordsTxtView = (TextView) findViewById(R.id.postQnKeywordsTxtView);
+        qnTxtView = (TextView) findViewById(R.id.qnTxtView);
 
         ansEdtTxt = (EditText) findViewById(R.id.postQnAnsEdtTxt);
 
@@ -150,6 +152,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate - postQn = null");
         }
         qnType = postQn.getQnType();
+        qnTxtView.setText(postQn.getQnTxt());
         if (postQn.getQnType().equalsIgnoreCase(Constants.VALUE_PostQn_Objective)) {
             Log.d(TAG, "onCreate - postQnType == objective");
             postQnDetailObjLL.setVisibility(View.VISIBLE);
