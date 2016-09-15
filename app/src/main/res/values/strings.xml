@@ -9,4 +9,5 @@
     <string name="title_activity_post_qn_obj_detail">PostQnDetailActivity</string>
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_matched_user_profile">MatchedUserProfileActivity</string>
+    <string name="title_activity_pick_keywords">PickKeywordsActivity</string>
 </resources>

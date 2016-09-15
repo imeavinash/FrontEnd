@@ -38,6 +38,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
 
     private Button sumbitButton;
     private Button postQnPickCtgryButton;
+    private Button pickKeywordsButton;
     private TextView categoryTxtView;
     private TextView keywordsTxtView;
     private TextView qnTxtView;
@@ -90,6 +91,22 @@ public class PostQnDetailActivity extends AppCompatActivity {
                 categoryTxtView.setText(category);
 
             }
+
+            if(requestCode == Constants.REQUEST_CODE_PICK_KEYWORDS){
+                ArrayList<String> selectedKeywords = data.getStringArrayListExtra(Constants.EXTRA_RESULT_PICK_KEYWORDS);
+                postQn.setKeywords(selectedKeywords);
+                String keywords="";
+                if (selectedKeywords.size() > 0) {
+                    keywords = keywords + selectedKeywords.get(0);
+                    for (int i = 1; i < selectedKeywords.size(); i++)
+                        keywords = keywords + "," + selectedKeywords.get(i);
+                    postQn.setKeywordString(keywords);
+                    keywordsTxtView.setText(keywords);
+                }else{
+                    Log.d(TAG,"onActivityResult - selectedKeywordsLength = 0");
+                }
+
+            }
         }
 
     }
@@ -111,6 +128,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
 
         sumbitButton = (Button) findViewById(R.id.btnSubmitPostQnObjDetail);
         postQnPickCtgryButton = (Button) findViewById(R.id.btnPostQnPickCtgry);
+        pickKeywordsButton = (Button) findViewById(R.id.btnPickKeywords);
 
         categoryTxtView = (TextView) findViewById(R.id.postQnCtgryTxtView);
         keywordsTxtView = (TextView) findViewById(R.id.postQnKeywordsTxtView);
@@ -144,6 +162,16 @@ public class PostQnDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(PostQnDetailActivity.this, CategoryActivity.class);
                 //intent.putExtra(Constants.EXTRA_PICK_CATEGORY,Constants.REQUEST_CATEGORY_POSTQN);
                 startActivityForResult(intent, Constants.REQUEST_CODE_CATEGORY);
+            }
+        });
+
+        pickKeywordsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PostQnDetailActivity.this,PickKeywordsActivity.class);
+                String ans = ansEdtTxt.getText().toString();
+                intent.putExtra("answerText",ans);
+                startActivityForResult(intent,Constants.REQUEST_CODE_PICK_KEYWORDS);
             }
         });
 
@@ -228,14 +256,25 @@ public class PostQnDetailActivity extends AppCompatActivity {
                     return;
                 }
                 postQn.setAnsTxt(ans);
-                ArrayList<String> keywordsArray = new ArrayList<>();
-                String[] keywrds = ans.split("\\\\s+");
-                if (keywrds.length > 0) {
-                    for (int i = 0; i < keywrds.length; i++)
-                        keywordsArray.add(keywrds[i]);
+                if(postQn.getKeywords()==null){
+                    Toast.makeText(PostQnDetailActivity.this, "Please select keywords", Toast.LENGTH_LONG).show();
+                    return;
+
                 }
 
-                postQn.setKeywords(keywordsArray);
+                if(postQn.getKeywords().size()==0){
+                    Toast.makeText(PostQnDetailActivity.this, "Please select keywords", Toast.LENGTH_LONG).show();
+                    return;
+
+                }
+//                ArrayList<String> keywordsArray = new ArrayList<>();
+//                String[] keywrds = ans.split("\\\\s+");
+//                if (keywrds.length > 0) {
+//                    for (int i = 0; i < keywrds.length; i++)
+//                        keywordsArray.add(keywrds[i]);
+//                }
+//
+//                postQn.setKeywords(keywordsArray);
             }
 
             int minutes = Integer.parseInt(min);
@@ -346,7 +385,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
                     pAnsJArray.add(jObj);
                 }
             }
-            jsonObjSend.put(Constants.TAG_PostQn_Keywords, keywords);
+            jsonObjSend.put(Constants.TAG_PostQn_Keywords, postQn.getKeywordString());
         }
 
         jsonObjSend.put(Constants.TAG_M_User_QA_pAns,pAnsJArray);

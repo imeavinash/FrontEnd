@@ -674,8 +674,8 @@ public class SeeQnFragment extends Fragment {
             super.onPostExecute(jsonObjRec);
             if (jsonObjRec != null && jsonObjRec.size() > 0) {
 
-                Log.d(TAG, "sendPassAnsToServer = " + jsonObjRec + toString());
-                String response = jsonObjRec.get(Constants.TAG_PostQn_Status).toString();
+                Log.d(TAG, "sendPassAnsToServer response = " + jsonObjRec + toString());
+                //String response = jsonObjRec.get(Constants.TAG_PostQn_Status).toString();
 
 
             } else

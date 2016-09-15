@@ -37,11 +37,12 @@
         <EditText
             android:id="@+id/postQnAnsEdtTxt"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="100dp"
             android:hint="Type your answer here"
             android:gravity="start"
-            android:textAlignment="viewStart"/>
+            android:textAlignment="viewStart"
+            android:inputType="textMultiLine"
+            android:isScrollContainer="true"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,6 +60,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="50dp"/>
+
+            <Button
+                android:id="@+id/btnPickKeywords"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pick Keywords"/>
 
 
         </LinearLayout>
@@ -195,7 +202,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="Set Answer Time"/>
+                    android:hint="Set Mins"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -208,7 +215,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
-                android:hint="Set Answer Time"/>
+                android:hint="Set Secs"/>
 
 
 

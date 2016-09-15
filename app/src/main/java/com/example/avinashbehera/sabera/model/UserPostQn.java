@@ -30,7 +30,17 @@ public class UserPostQn implements Serializable {
 
     private ArrayList<String> categories;
 
+    private String keywordString;
+
     public UserPostQn() {
+    }
+
+    public String getKeywordString() {
+        return keywordString;
+    }
+
+    public void setKeywordString(String keywordString) {
+        this.keywordString = keywordString;
     }
 
     public ArrayList<String> getProposed_answer() {

@@ -23,12 +23,14 @@ public class Constants {
 
     public static final int REQUEST_CODE_CATEGORY = 1;
     public static final int REQUEST_SELECT_PICTURE = 5;
+    public static final int REQUEST_CODE_PICK_KEYWORDS = 6;
 
     public static final String REQUEST_CATEGORY_REGISTRATION="registration_category";
     public static final String REQUEST_CATEGORY_POSTQN="postqn_category";
 
     public static final String EXTRA_PICK_CATEGORY="PICK_CATEGORY";
     public static final String EXTRA_RESULT_CATEGORY="RESULT_CATEGORY";
+    public static final String EXTRA_RESULT_PICK_KEYWORDS="RESULT_KEYWORDS";
 
 
     public static final String EXTRA_UserFBId = "fb_id";
