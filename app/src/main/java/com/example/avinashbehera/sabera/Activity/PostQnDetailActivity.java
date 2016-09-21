@@ -1,8 +1,10 @@
 package com.example.avinashbehera.sabera.Activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -85,7 +87,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
                     Log.d(TAG, "postQn.getCategories !=null");
                     category = category + postQn.getCategories().get(0);
                     for (int i = 1; i < postQn.getCategories().size(); i++)
-                        category = category + postQn.getCategories().get(i);
+                        category = category + ", " + postQn.getCategories().get(i);
                 }
                 Log.d(TAG, "category = " + category);
                 categoryTxtView.setText(category);
@@ -99,7 +101,7 @@ public class PostQnDetailActivity extends AppCompatActivity {
                 if (selectedKeywords.size() > 0) {
                     keywords = keywords + selectedKeywords.get(0);
                     for (int i = 1; i < selectedKeywords.size(); i++)
-                        keywords = keywords + "," + selectedKeywords.get(i);
+                        keywords = keywords + ", " + selectedKeywords.get(i);
                     postQn.setKeywordString(keywords);
                     keywordsTxtView.setText(keywords);
                 }else{
@@ -156,6 +158,25 @@ public class PostQnDetailActivity extends AppCompatActivity {
         postQnDetailSubjLL.setVisibility(View.GONE);
 
         sumbitButton.setOnClickListener(sumbitButtonClickListener);
+
+
+        ansEdtTxt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.d(TAG,"ansEdtTxt - onFocusChange");
+                if(hasFocus){
+                    Log.d(TAG,"ansEdtTxt - onFocusChange - hasFocus");
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                        //v.setElevation(50);
+
+                    }
+
+
+                    //((EditText) v).setShadowLayer(50,0,0,Color.GREEN);
+
+                }
+            }
+        });
         postQnPickCtgryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

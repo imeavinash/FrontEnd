@@ -12,6 +12,7 @@ import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +56,7 @@ import java.util.Date;
  */
 public class SeeQnFragment extends Fragment {
 
-    private TextView seeQnTxtView;
+    //private TextView seeQnTxtView;
     private static ArrayList<UserSeeQn> qnArrayList;
     private static ArrayList<LinearLayout> qnLLArrayList;
     public FrameLayout qnContainer;
@@ -68,6 +69,7 @@ public class SeeQnFragment extends Fragment {
     private TextView secTxtView;
     private TextView minSecSeparator;
     private AlphaAnimation animation1;
+    private CardView qnCardView;
 
 
     public static final String TAG = SeeQnFragment.class.getSimpleName();
@@ -85,7 +87,7 @@ public class SeeQnFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_see_qns, container, false);
-        seeQnTxtView = (TextView)rootView.findViewById(R.id.seeQnTxtView);
+        //seeQnTxtView = (TextView)rootView.findViewById(R.id.seeQnTxtView);
         User user = PrefUtilsUser.getCurrentUser(getContext());
         //seeQnTxtView.setText(user.getQuestions());
 
@@ -95,6 +97,7 @@ public class SeeQnFragment extends Fragment {
         secTxtView = (TextView)rootView.findViewById(R.id.secTxtView);
         minSecSeparator = (TextView)rootView.findViewById(R.id.minSecSeparator);
         timerLL = (LinearLayout)rootView.findViewById(R.id.timerLL);
+        qnCardView = (CardView)rootView.findViewById(R.id.qnCard);
 
         btnLoadQns.setOnClickListener(loadQnsOnClickListener);
 
@@ -116,6 +119,8 @@ public class SeeQnFragment extends Fragment {
     public View.OnClickListener loadQnsOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            Log.d(TAG,"loadQnsOnClickListener");
 
             User user1 = PrefUtilsUser.getCurrentUser(getContext());
             ArrayList<UserSeeQn> qnArr = user1.getQuestionArray();
@@ -283,6 +288,7 @@ public class SeeQnFragment extends Fragment {
         Log.d(TAG,"isVisible variable = "+isVisible);
         if(!isVisible){
             btnLoadQns.setVisibility(View.VISIBLE);
+            qnCardView.setVisibility(View.GONE);
             return;
         }
 
@@ -295,6 +301,7 @@ public class SeeQnFragment extends Fragment {
         qnArrayList = user.getQuestionArray();
         if(qnArrayList==null || qnArrayList.size()==0){
             btnLoadQns.setVisibility(View.VISIBLE);
+            qnCardView.setVisibility(View.GONE);
 
             return;
         }
@@ -309,6 +316,8 @@ public class SeeQnFragment extends Fragment {
         countDownTimer=new MyCountDownTimer(nextTimer,1000);
         countDownTimer.start();
             if (qn.getQnType().equalsIgnoreCase("objective")) {
+
+                qnCardView.setVisibility(View.VISIBLE);
 
                 LayoutInflater inflater1 = LayoutInflater.from(getContext());
                 final LinearLayout qn1 = (LinearLayout)inflater1.inflate(R.layout.see_question_objective,null);
@@ -446,6 +455,7 @@ public class SeeQnFragment extends Fragment {
                         }
 
                         qnContainer.removeAllViews();
+                        qnCardView.setVisibility(View.GONE);
 
                         //qnArrayList.remove(qnNos-1);
 
@@ -473,6 +483,8 @@ public class SeeQnFragment extends Fragment {
             //if qn is subjective
 
             else{
+
+                qnCardView.setVisibility(View.VISIBLE);
 
                 LayoutInflater inflater1 = LayoutInflater.from(getContext());
                 final LinearLayout qn1 = (LinearLayout)inflater1.inflate(R.layout.see_qn_subjective,null);
@@ -578,7 +590,9 @@ public class SeeQnFragment extends Fragment {
                             new sendAnsToServer().execute(jsonObjectSend);
                         }
                         //qnContainer.removeViewAt(currentQnNo);
+
                         qnContainer.removeAllViews();
+                        qnCardView.setVisibility(View.GONE);
                         //qnArrayList.remove(qnNos-1);
 
                         qnArrayList.remove(qnArrayList.size()-1);

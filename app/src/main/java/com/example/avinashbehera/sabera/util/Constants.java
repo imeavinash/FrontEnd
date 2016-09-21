@@ -54,22 +54,25 @@ public class Constants {
 
     public static final boolean backendTest = true;
 
+    //public static final String baseURL = "http://52.66.47.149:9000/";
+    public static final String baseURL = "http://192.168.0.189:9000/";
 
 
-    public static final String FirstPageLoginButtonSendDataToServerURL = "http://192.168.0.189:9000/checkUserIfSaberaUserExists";
-    public static final String RegisterButtonSendDataToServerURL = "http://192.168.0.189:9000/register";
-    public static final String RegDetailDoneButtonSendDataToServer = "http://192.168.0.189:9000/storeUserProfile";
-    public static final String FbLoginCheckURL = "http://192.168.0.189:9000/checkUserIfFbUserExists";
-    public static final String sendPostQnToServerURL = "http://192.168.0.189:9000/postQuestion";
-    public static final String sendAnswerToServerURL = "http://192.168.0.189:9000/postAnswer";
-    public static final String sendPassAnswerToServerURL = "http://192.168.0.189:9000/passQuestion";
-    public static final String sendGcmTokenLoginToServerURL = "http://192.168.0.189:9000/storeDeviceToken";
-    public static final String sendGcmTokenLogoutToServerURL = "http://192.168.0.189:9000/logout";
-    public static final String sendChatToServerURL = "http://192.168.0.189:9000/storeChat";
-    public static final String sendPicToServerURL = "http://192.168.0.189:9000/updateProfilePicture";
-    public static final String loadQnsRequestURL = "http://192.168.0.189:9000/loadMoreQuestions";
-    public static final String sendEmailRegURL = "http://192.168.0.189:9000/checkRegistration";
-    public static final String resendPasscodeURL = "http://192.168.0.189:9000/resendPassCode";
+
+    public static final String FirstPageLoginButtonSendDataToServerURL = baseURL+"checkUserIfSaberaUserExists";
+    public static final String RegisterButtonSendDataToServerURL = baseURL+"register";
+    public static final String RegDetailDoneButtonSendDataToServer = baseURL+"storeUserProfile";
+    public static final String FbLoginCheckURL = baseURL+"checkUserIfFbUserExists";
+    public static final String sendPostQnToServerURL = baseURL+"postQuestion";
+    public static final String sendAnswerToServerURL = baseURL+"postAnswer";
+    public static final String sendPassAnswerToServerURL = baseURL+"passQuestion";
+    public static final String sendGcmTokenLoginToServerURL = baseURL+"storeDeviceToken";
+    public static final String sendGcmTokenLogoutToServerURL = baseURL+"logout";
+    public static final String sendChatToServerURL = baseURL+"storeChat";
+    public static final String sendPicToServerURL = baseURL+"updateProfilePicture";
+    public static final String loadQnsRequestURL = baseURL+"loadMoreQuestions";
+    public static final String sendEmailRegURL = baseURL+"checkRegistration";
+    public static final String resendPasscodeURL = baseURL+"resendPassCode";
 
 
     public static final int POST_QN_TYPE_NONE = 0;

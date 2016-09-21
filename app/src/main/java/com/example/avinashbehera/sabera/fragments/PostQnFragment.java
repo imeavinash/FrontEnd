@@ -110,8 +110,10 @@ import com.example.avinashbehera.sabera.util.Utility;
                         else {
                             tempQn.setQnType(Constants.VALUE_PostQn_Subjective);
                         }
+
                             tempQn.setQnTxt(postQnEditText.getText().toString());
                             PrefUtilsPostQn.setCurrentPostQn(tempQn,getContext());
+                        postQnEditText.getText().clear();
                             Intent intent = new Intent(getContext(), PostQnDetailActivity.class);
                             startActivity(intent);
 
