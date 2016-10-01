@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,6 +13,8 @@
             android:id="@+id/seeQnSubjQnText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textStyle="bold|italic"
+            android:textSize="20sp"
             />
     </LinearLayout>
 
@@ -22,30 +24,11 @@
         android:layout_height="wrap_content"
         android:minHeight="200dp"
         android:gravity="start"
-        android:background="@drawable/edittext_postqn"
+        android:background="@drawable/edittext_ans_subjective"
         android:textAlignment="viewStart"/>
 
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnSeeQnSubjPass"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Pass"/>
-
-        <Button
-            android:id="@+id/btnSeeQnSubjSubmit"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Submit"/>
-
-    </LinearLayout>
 
 </LinearLayout>

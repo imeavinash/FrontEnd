@@ -10,4 +10,8 @@
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_matched_user_profile">MatchedUserProfileActivity</string>
     <string name="title_activity_pick_keywords">PickKeywordsActivity</string>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

@@ -7,4 +7,6 @@
     <color name="bg_bubble_self">#E1E1E1</color>
     <color name="blue">#2196F3</color>
     <color name="blue_light">#BBDEFB</color>
+    <color name="deep_purple">#673AB7</color>
+    <color name="black_overlay">#66000000</color>
 </resources>

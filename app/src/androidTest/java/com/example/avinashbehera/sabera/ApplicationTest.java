@@ -1,4 +1,4 @@
-package com.example.avinashbehera.sabera;
+package com.avinashbehera.sabera;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

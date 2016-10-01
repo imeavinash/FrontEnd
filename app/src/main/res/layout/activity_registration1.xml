@@ -70,7 +70,8 @@
             android:id="@+id/pwdReg1EdtTxt"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"/>
 
     </LinearLayout>
 
@@ -90,7 +91,8 @@
             android:id="@+id/retypePwdReg1EdtTxt"
             android:layout_width="0dp"
             android:layout_weight="2"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"/>
 
     </LinearLayout>
 
